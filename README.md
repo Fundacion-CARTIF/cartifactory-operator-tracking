@@ -273,9 +273,27 @@ The second action from the `orchestrator` is created for changing which hand is 
 
 # Running the Module
 
+The launch file starts the full hand-tracking pipeline:
+
+```bash
+ros2 launch hand_hri_mediapipe hand_pipeline_lifecycle.launch.py
+```
+
 ## Launch Arguments
 
-| Argument  | Default   | Type  | Description   | 
-|--------   |--------   |-------|--------       |
-|           |           |       |               |
+| Argument | Default | Type | Description |
+|---|---|---|---|
+| `camera_name` | `cameraD455` | string | Camera namespace used to build the color, depth, and camera info topics. |
 
+
+---
+This project has received funding from **Horizon Europe** research and innovation programme under grant agreement **no. 101135784**.
+<p align="left">
+  <!-- ---------- ARISE logo ---------- -->
+  <!-- Light mode -->
+  <img src="images/EN_FundedbytheEU_RGB_POS.png#gh-light-mode-only" alt="EU Funding for light mode" height="100"/>
+
+  <!-- Dark mode -->
+  <img src="images/EN_FundedbytheEU_RGB_NEG.png#gh-dark-mode-only" alt="EU Funding for dark mode" height="100"/>
+
+</p>
