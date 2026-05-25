@@ -1,0 +1,10 @@
+std_msgs/Header header
+geometry_msgs/Vector3 normal
+float64 d
+geometry_msgs/Point centroid
+float64 rmse_m
+float64 rmse_mm
+int32 n_inliers
+bool accepted
+string fit_method
+string[] reject_reasons

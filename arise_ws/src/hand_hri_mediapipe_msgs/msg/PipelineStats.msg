@@ -1,0 +1,21 @@
+std_msgs/Header header
+
+uint64 frames_dropped
+
+uint64 action_goals_received
+uint64 action_goals_accepted
+uint64 action_goals_rejected
+uint64 action_goals_canceled
+uint64 action_goals_succeeded
+uint64 action_goals_failed
+
+uint64 match_requests
+uint64 match_success
+uint64 match_fail
+
+float32 fps_input
+float32 fps_processed
+float32 avg_inference_ms
+
+bool camera_available
+string node_name

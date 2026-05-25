@@ -1,0 +1,13 @@
+# Request definition
+string target_state # Index of the area we are scanning    
+
+---
+# Result definition
+bool success        # Boolean value say if the job was done correctly
+string result_msg   # The real coordinates requested to the Global positioner
+
+---
+# Feedback definition
+string feedback     # Information processes from the on going process
+
+
