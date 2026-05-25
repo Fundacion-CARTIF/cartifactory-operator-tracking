@@ -1,13 +1,9 @@
-# Request definition
+# Goal
 string hand # Hand request  
-
 ---
-# Result definition
+# Result
 bool success        # Boolean value say if the job was done correctly
 string result_msg   # The real coordinates requested to the Global positioner
-
 ---
-# Feedback definition
+# Feedback
 string feedback     # Information processes from the on going process
-
-
