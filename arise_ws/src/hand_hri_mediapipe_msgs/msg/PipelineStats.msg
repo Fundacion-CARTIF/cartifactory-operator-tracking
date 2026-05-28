@@ -1,21 +1,27 @@
 std_msgs/Header header
 
-uint64 frames_dropped
-
-uint64 action_goals_received
-uint64 action_goals_accepted
-uint64 action_goals_rejected
-uint64 action_goals_canceled
-uint64 action_goals_succeeded
-uint64 action_goals_failed
-
-uint64 match_requests
-uint64 match_success
-uint64 match_fail
+string node_name
 
 float32 fps_input
 float32 fps_processed
-float32 avg_inference_ms
+float32 avg_latency_ms
 
 bool camera_available
-string node_name
+bool tcp_pose_available
+
+uint32 action_goals_received
+uint32 action_goals_accepted
+uint32 action_goals_rejected
+uint32 action_goals_canceled
+uint32 action_goals_succeeded
+uint32 action_goals_failed
+
+string mediapipe_state
+string landmarks_3d_state
+string palm_plane_state
+string cam_to_base_state
+
+uint32 tracked_hands_count
+string[] tracked_hand_ids
+
+string hand_selection

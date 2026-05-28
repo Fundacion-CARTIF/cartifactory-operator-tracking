@@ -22,7 +22,7 @@ def generate_launch_description():
         executable="hand_mediapipe_lifecycle_node",
         name="hand_mediapipe_node",
         output="screen",
-        # prefix = ''
+        # prefix="/home/roboticaindustrial/Documentos/Robot_Camara3d/codigos-transformaciones-camara-robot/ur_ws/.venv/bin/python ",
         parameters=[{
             "image_topic": color_topic,
             "publish_debug_image": True,
@@ -41,6 +41,7 @@ def generate_launch_description():
         executable="hand_landmarks_3d_lifecycle_node",
         name="hand_landmarks_3d_node",
         output="screen",
+        # prefix="/home/roboticaindustrial/Documentos/Robot_Camara3d/codigos-transformaciones-camara-robot/ur_ws/.venv/bin/python ",
         parameters=[{
             "tracked_topic": "/humans/hands/tracked",
             "depth_topic": depth_topic,
@@ -65,6 +66,7 @@ def generate_launch_description():
         executable="hand_palm_plane_lifecycle_node",
         name="hand_palm_plane_node",
         output="screen",
+        # prefix="/home/roboticaindustrial/Documentos/Robot_Camara3d/codigos-transformaciones-camara-robot/ur_ws/.venv/bin/python ",
         parameters=[{
             "tracked_topic": "/humans/hands/tracked",
             "landmarks3d_suffix": "landmarks3d",
@@ -93,6 +95,7 @@ def generate_launch_description():
         executable="hand_cam_to_base_lifecycle_node",
         name="hand_cam_to_base_node",
         output="screen",
+        # prefix="/home/roboticaindustrial/Documentos/Robot_Camara3d/codigos-transformaciones-camara-robot/ur_ws/.venv/bin/python ",
         parameters=[{
             "tracked_topic": "/humans/hands/tracked",
             "tcp_pose_topic": "/ur/tcp_pose",
@@ -111,9 +114,19 @@ def generate_launch_description():
         executable="orchestrator",
         name="orchestrator",
         output="screen",
+        # prefix="/home/roboticaindustrial/Documentos/Robot_Camara3d/codigos-transformaciones-camara-robot/ur_ws/.venv/bin/python ",
         parameters=[{
             "poll_period_s": 5.0,
-            "action_topic": "/lifecycle_control",
+            "lf_action_topic": "/lifecycle_control",
+            "hand_action_topic": "/hand_change_action",
+            "hand_topic": "/hand_change",
+
+            "pipeline_stats_topic": "/stats/hand_pipeline",
+
+            "image_topic": ["/camera/", camera_name, "/color/image_raw"],
+            "debug_image_topic": "/humans/hands/debug_image",
+            "tracked_topic": "/humans/hands/tracked",
+            "tcp_pose_topic": "/ur/tcp_pose",
         }],
         emulate_tty=True,
     )
