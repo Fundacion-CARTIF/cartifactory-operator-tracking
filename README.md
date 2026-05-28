@@ -42,26 +42,23 @@
 
 
 ## Features
-- Automatic CPU / CUDA support
-- Segmentation support (OBB from mask)
-- Optional annotated image publishing
-- Latched `class_map` publishing
-- Industrial metrics (FPS, infer_ms, device, etc.)
-- Configurable `class_id` mode
-
+- 
 ## Table of Contents
 - [General Overview](#general-overview)
   - [Features](#features)
 - [Getting started](#getting-started)
   - [Dependencies](#dependencies)
 - [What is included in the module](#what-is-included-in-the-module)
-  - [Hand Mediapipe node](#hand-mediapipe-node)
-  - [hand\_cam\_to\_base\_node](#hand_cam_to_base_node)
+  - [Hand Mediapipe node](#hand-mediapipe-node)## 2D Hand detection (`hand_mediapipe_node`)
   - [Hand landmarks 3D node](#hand-landmarks-3d-node)
-  - [Hand palm plane node](#hand-palm-plane-node)
+  - [Hand palm plane node](#hand-palm-plane-node) ## Hand palm plane node (`hand_palm_plane_node`)
+  - [Camera to robot frame hand transformation ](#camera-to-robot-frame-hand-transformation-(`hand_cam_to_base_node`))
+
+
 - [Custom Interfaces](#custom-interfaces)
 - [Running the Module](#running-the-module)
   - [Launch Arguments](#launch-arguments)
+## Camera to robot frame hand transformation (`hand_cam_to_base_node`)
 
 # Getting started
 This module represents part of an operator detection system. This module is specialized in hand-tracking and processing, outputing a calculated plane and normal.
@@ -75,8 +72,6 @@ This module represents part of an operator detection system. This module is spec
   <img src="images/Diagram_dark.png#gh-dark-mode-only" alt="EU Funding for dark mode" height="500"/>
 
 </p>
-
-
 
 ## Dependencies
 All Python dependencies are included inside the `requirements.txt` file. To install, execute on terminal:
@@ -94,7 +89,7 @@ sudo apt install \
 # What is included in the module
 
 
-## Hand Mediapipe node
+## 2D Hand detection (`hand_mediapipe_node`)
 ROS2 node for real-time hand detection and 2D landmark extraction using MediaPipe Hands. This node subscribes to RGB camera images, runs MediaPipe hand tracking inference, and publishes:
 - Tracked hand identifiers
 - Normalized 2D hand landmarks
@@ -113,8 +108,7 @@ This node has the following interfaces:
 | Publisher | `/humans/hands/debug_image`| Debug visualization image with rendered landmarks. |
 | Subscriber | *`*image_topic`*  | RGB image topic configured through the `image_topic` parameter. Default value is `/camera/cameraD455/color/image_raw`. |
 
-
-## hand_cam_to_base_node
+## Camera to robot frame hand transformation (`hand_cam_to_base_node`)
 ROS2 node for transforming hand landmarks and palm plane estimations from the camera reference frame into the robot base reference frame. Using the calibrated transformation between the robot TCP and the camera, the node computes the transformation from camera coordinates to the robot base frame and republishes:
 
 - Hand landmarks in the base frame
@@ -128,12 +122,8 @@ This node has the following interfaces:
 | Publisher|`/humans/hands/<id>/palm_plane_base` |  |
 - Optional visualization markers
 
-## Hand landmarks 3D node
-  ROS2 node that projects 2D hand landmarks into 3D space using
-  synchronized depth images and camera intrinsic parameters.
-
-  The node dynamically creates processing pipelines for tracked hands,
-  converts normalized 2D landmark coordinates into 3D camera-frame
+## Hand landmarks 3D node (`hand_landmarks_3d_node`)
+  The node dynamically creates processing pipelines for tracked hands, converts normalized 2D landmark coordinates into 3D camera-frame
   coordinates, and publishes:
 
   - 3D hand landmarks
@@ -145,8 +135,7 @@ This node has the following interfaces:
   - Depth images
   - CameraInfo messages
 
-
-## Hand palm plane node
+## Hand palm plane node (`hand_palm_plane_node`)
 This node subscribes to 3D hand landmark topics and computes a palm plane for each tracked hand using Singular Value Decomposition (SVD)-based plane fitting. The estimated plane is stabilized over time using configurable filtering techniques and optionally visualized in RViz.
 
 >[!Important]
