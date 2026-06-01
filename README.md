@@ -73,7 +73,7 @@
 
 # Getting started
 
-This module represents part of an operator detection system. This module is specialized in hand-tracking and processing, outputing a calculated plane and normal.
+This module provides a complete hand-tracking pipeline, including 2D hand detection, 3D landmark reconstruction, palm plane estimation and transformation into the robot reference frame.
 
 <p align="left">
   <!-- ---------- REUSABLE MODULE DIAGRAM ---------- -->
@@ -133,6 +133,18 @@ This node has the following interfaces:
 | Publisher  | `/humans/hands/<id>/roi2d`       | Normalized 2D bounding box for each detected hand.                                                                            |
 | Publisher  | `/humans/hands/debug_image`      | Debug visualization image with rendered landmarks.                                                                            |
 | Subscriber | *`*image_topic`*               | RGB image topic configured through the `image_topic` parameter. Default value is `/camera/<camera_name>/color/image_raw`. |
+
+### Runtime Hand Selection
+
+The hand detection node supports runtime selection of the hands to be tracked:
+
+- `left`
+- `right`
+- `both`
+
+The selection can be modified while the node is active through the `HandChange` action exposed by the orchestrator.
+
+No lifecycle transition or node restart is required.
 
 ## Hand landmarks 3D node (`hand_landmarks_3d_node`)
 
@@ -318,11 +330,33 @@ Message definition for representing a tracked hand in 3D space using MediaPipe l
 
 ## Pipeline Statistics
 
-For the sending the diagnostics to the Context Broker we use a custom interface `custom_interfaces/PipelineStats` with the followind definition:
+The module includes a monitoring and diagnostics interface (we use a custom interface `custom_interfaces/PipelineStats`) that aggregates runtime information from the complete hand-tracking pipeline.
+
+This information is intended to be forwarded to external monitoring systems such as FIWARE Orion Context Broker and can be used for system supervision, performance evaluation and deployment diagnostics.
 
 | Field   | Type    | Description |
 | ------- | ------- | ----------- |
 | `---` | `---` | ---         |
+
+> [!Note]
+>
+> The Pipeline Statistics interface is currently under active development and may evolve in future releases. Additional monitoring metrics and diagnostic fields will be incorporated as the reusable module matures.
+
+## Lifecycle Architecture
+
+All processing nodes are implemented as ROS2 Lifecycle Nodes.
+
+At startup, all nodes remain in the `unconfigured` state. The module includes an `orchestrator` node that exposes ROS2 Actions for managing the lifecycle of the complete pipeline.
+
+Supported lifecycle transitions:
+
+- configure
+- activate
+- deactivate
+- cleanup
+- shutdown
+
+This architecture allows external applications to start, stop and reconfigure the entire hand-tracking pipeline without restarting the system.
 
 ## Lifecycle action
 
@@ -380,9 +414,14 @@ ros2 launch hand_hri_mediapipe hand_pipeline_lifecycle.launch.py
 
 ## Launch Arguments
 
-| Argument        | Default        | Type   | Description                                                              |
-| --------------- | -------------- | ------ | ------------------------------------------------------------------------ |
-| `camera_name` | `cameraD455` | string | Camera namespace used to build the color, depth, and camera info topics. |
+| Argument        | Default                         | Type                 | Description                                                                                                                                                 |
+| --------------- | ------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `camera_name` | `cameraD455`                  | string               | Camera namespace used to build the color, depth, and camera info topics.                                                                                    |
+| `T_tcp_cam`   | `identity/calibrated default` | float array `[16]` | Homogeneous transformation matrix from the robot TCP frame to the camera frame, used to transform hand landmarks and palm planes into the robot base frame. |
+
+> [!Important]
+>
+> The `T_tcp_cam` matrix must be adapted to the real camera-to-robot calibration of the setup. An incorrect calibration will produce incorrect hand landmark and palm plane positions in the robot base frame.
 
 ---
 
@@ -391,10 +430,10 @@ This project has received funding from **Horizon Europe** research and innovatio
 <p align="left">
   <!-- ---------- ARISE logo ---------- -->
   <!-- Light mode -->
-  <img src="images/EN_FundedbytheEU_RGB_POS.png#gh-light-mode-only" alt="EU Funding for light mode" height="100"/>
+  <img src="images/EN_Co_fundedbytheEU_RGB_Monochrome.png#gh-light-mode-only" alt="EU Funding for light mode" height="100"/>
 
 <!-- Dark mode -->
 
-<img src="images/EN_FundedbytheEU_RGB_NEG.png#gh-dark-mode-only" alt="EU Funding for dark mode" height="100"/>
+<img src="images/EN_Co_fundedbytheEU_RGB_NEG.png#gh-dark-mode-only" alt="EU Funding for dark mode" height="100"/>
 
 </p>
