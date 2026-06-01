@@ -60,16 +60,14 @@
   - [Dependencies](#dependencies)
 - [What is included in the module](#what-is-included-in-the-module)
 
-  - [Hand Mediapipe node](#hand-mediapipe-node)## 2D Hand detection (`hand_mediapipe_node`)
-  - [Hand landmarks 3D node](#hand-landmarks-3d-node)
-  - [Hand palm plane node](#hand-palm-plane-node) ## Hand palm plane node (`hand_palm_plane_node`)
-  - [Camera to robot frame hand transformation ](#camera-to-robot-frame-hand-transformation-(`hand_cam_to_base_node`))
+  - [Hand Mediapipe node](#2d-hand-detection-hand_mediapipe_node)
+  - [Hand landmarks 3D node](#hand-landmarks-3d-node-hand_landmarks_3d_node)
+  - [Hand palm plane node](#hand-palm-plane-node-hand_palm_plane_node)
+  - [Camera to robot frame hand transformation ](#camera-to-robot-frame-hand-transformation-hand_cam_to_base_node)
 - [Custom Interfaces](#custom-interfaces)
 - [Running the Module](#running-the-module)
 
   - [Launch Arguments](#launch-arguments)
-
-## Camera to robot frame hand transformation (`hand_cam_to_base_node`)
 
 # Getting started
 
