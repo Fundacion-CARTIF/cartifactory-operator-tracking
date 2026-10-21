@@ -1,0 +1,122 @@
+# Segunda fase: ingestión/consulta NGSI-LD y visualización, después del Mapping Tool.
+# Adaptado del tutorial ARISE (Orion-LD + MongoDB + TimescaleDB), con Adminer y Grafana.
+# https://arise-framework-documentation.readthedocs.io/en/latest/rst/tutorials/ros2_fiware_actions_app.html
+#
+# Puertos elegidos para convivir con docker-compose-mapping.yml y los servicios de srv16:
+#   8081  -> DDS Discovery del Mapping Tool (NO usar para Adminer)
+#   3001  -> Mapping Tool Web
+#   8082  -> Adminer (host)
+#   4430  -> Grafana (host)
+#   5433  -> TimescaleDB (host -> 5432 contenedor, solo loopback)
+#   1026  -> Orion-LD REST API (network_mode: host)
+
+name: arise-fiware
+
+services:
+  timescale-db:
+    image: timescale/timescaledb-postgis:1.7.5-pg12
+    hostname: timescale-db
+    container_name: db-timescale
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orion -d orion"]
+      interval: 15s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+    environment:
+      POSTGRES_USER: orion
+      POSTGRES_PASSWORD: orion
+      POSTGRES_DB: orion
+    command: ["postgres", "-c", "log_statement=none"]
+    # El 5432 del host ya lo usa postgres_sustain en srv16.
+    # El 5433 se publica solo en loopback, para el Orion-LD con network_mode: host.
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - timescale-db:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7.0
+    privileged: true
+    ipc: host
+    network_mode: host
+    # Orion-LD comparte la red del host y se conecta a localhost:27017.
+    # Restringimos MongoDB a loopback, a diferencia del --bind_ip_all del ejemplo.
+    command: ["--bind_ip", "127.0.0.1"]
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  orion:
+    image: fiware/orion-ld:1.13.0-PRE-1852
+    privileged: true
+    ipc: host
+    network_mode: host
+    depends_on:
+      mongodb:
+        condition: service_started
+      timescale-db:
+        condition: service_healthy
+    restart: unless-stopped
+    # -wip dds: integración DDS; -troe: histórico temporal en TimescaleDB.
+    command: -dbhost localhost -wip dds -mongocOnly -troe
+    environment:
+      ORIONLD_MONGO_HOST: localhost
+      ORIONLD_TROE_HOST: localhost
+      # Puerto PUBLICADO del host, no el puerto interno 5432 del contenedor TimescaleDB.
+      ORIONLD_TROE_PORT: "5433"
+      ORIONLD_TROE_USER: orion
+      ORIONLD_TROE_PWD: orion
+    volumes:
+      # Generado previamente desde http://localhost:3001 con 'Also save to disk'.
+      # Exigir que el archivo exista: evita crear por accidente un directorio con ese nombre.
+      - type: bind
+        source: ./fiware/out/dds-config.json
+        target: /root/.orionld
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail -s http://localhost:1026/version >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: timescale-db
+    # 8081 pertenece al WebSocket DDS discovery.
+    ports:
+      - "8082:8080"
+    depends_on:
+      timescale-db:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:latest
+    hostname: grafana
+    container_name: grafana
+    ports:
+      - "4430:3000"
+    depends_on:
+      timescale-db:
+        condition: service_healthy
+    environment:
+      GF_SERVER_PROTOCOL: http
+      GF_SERVER_HTTP_PORT: "3000"
+      GF_SERVER_REDIRECT_TO_HTTPS: "false"
+      # La fuente Infinity está en datasources.yaml; su plugin debe instalarse.
+      GF_INSTALL_PLUGINS: yesoreyeram-infinity-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./fiware/grafana_datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+  timescale-db:
+  grafana_data:

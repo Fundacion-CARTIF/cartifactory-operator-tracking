@@ -1,0 +1,31 @@
+# Aprovisionamiento automático de fuentes de datos de Grafana.
+# La conexión PostgreSQL usa la red interna del Compose, no el puerto 5433 del host.
+# IMPORTANTE: credenciales de demostración, no aptas para producción.
+apiVersion: 1
+
+datasources:
+  - name: orion
+    type: postgres
+    url: timescale-db:5432
+    user: orion
+
+    secureJsonData:
+      password: orion
+
+    jsonData:
+      database: orion
+      sslmode: disable
+      postgresVersion: 1200
+      timescaledb: true
+
+    isDefault: true
+    editable: true
+
+  - name: yesoreyeram-infinity-datasource
+    uid: aee7znssxxvr4c
+    type: yesoreyeram-infinity-datasource
+    isDefault: false
+    editable: true
+
+    jsonData:
+      global_queries: []

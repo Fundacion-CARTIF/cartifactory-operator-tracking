@@ -1,0 +1,164 @@
+services:
+  operator_tracking:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+
+    image: cartifactory/operator-tracking:latest
+    pull_policy: build
+    container_name: operator_tracking
+
+    network_mode: host
+    ipc: host
+    privileged: true
+
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-0}
+      RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+      # Local-only transport used in the successful test.
+      # Use DEFAULT for communication with ROS nodes on other computers.
+      FASTDDS_BUILTIN_TRANSPORTS: ${FASTDDS_BUILTIN_TRANSPORTS:-UDPv4}
+      # DISPLAY: ":0"
+      # QT_X11_NO_MITSHM: "1"
+      # LIBGL_ALWAYS_SOFTWARE: "1"
+
+    # Persistent Linux storage for playback, available in both camera and bag modes.
+    # Copy recordings once from /ros_bags_source to /ros_bags before playback.
+    # USB access remains optional via docker-compose-usb.yml.
+    volumes:
+      - ros_bags_data:/ros_bags
+      - ./ros_bags:/ros_bags_source:ro
+
+    command:
+      - ros2
+      - launch
+      - hand_hri_mediapipe
+      - hand_pipeline_lifecycle.launch.py
+      - camera_name:=${CAMERA_NAME:-cameraD455}
+
+    restart: unless-stopped
+
+    stdin_open: true
+    tty: true
+
+  timescale-db:
+    image: timescale/timescaledb-postgis:1.7.5-pg12
+    hostname: timescale-db
+    container_name: db-timescale
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orion -d orion"]
+      interval: 15s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+    environment:
+      POSTGRES_USER: orion
+      POSTGRES_PASSWORD: orion
+      POSTGRES_DB: orion
+    command: ["postgres", "-c", "log_statement=none"]
+    # The host port 5433 maps to PostgreSQL's port 5432 inside the container.
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - timescale-db:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7.0
+    privileged: true
+    ipc: host
+    network_mode: host
+    # Orion-LD uses localhost:27017, so MongoDB listens only on loopback.
+    command: ["--bind_ip", "127.0.0.1"]
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  orion:
+    image: fiware/orion-ld:1.13.0-PRE-1852
+    privileged: true
+    ipc: host
+    network_mode: host
+    depends_on:
+      mongodb:
+        condition: service_started
+      timescale-db:
+        condition: service_healthy
+    restart: unless-stopped
+    command: -dbhost localhost -wip dds -mongocOnly -troe
+    environment:
+      ORIONLD_MONGO_HOST: localhost
+      ORIONLD_TROE_HOST: localhost
+      # Orion-LD uses the host-network port, not container port 5432.
+      ORIONLD_TROE_PORT: "5433"
+      ORIONLD_TROE_USER: orion
+      ORIONLD_TROE_PWD: orion
+    volumes:
+      # Create this file with the Mapping Tool before starting Orion-LD.
+      - type: bind
+        source: ./fiware/out/dds-config.json
+        target: /root/.orionld
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail -s http://localhost:1026/version >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: timescale-db
+    # Port 8081 is already used by DDS discovery.
+    ports:
+      - "8082:8080"
+    depends_on:
+      timescale-db:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:latest
+    hostname: grafana
+    container_name: grafana
+    ports:
+      - "4430:3000"
+    depends_on:
+      timescale-db:
+        condition: service_healthy
+    environment:
+      GF_SERVER_PROTOCOL: http
+      GF_SERVER_HTTP_PORT: "3000"
+      GF_SERVER_REDIRECT_TO_HTTPS: "false"
+      # Required by the second datasource in datasources.yaml.
+      GF_INSTALL_PLUGINS: yesoreyeram-infinity-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./fiware/grafana_datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+
+
+
+
+      - ./fiware/grafana_datasources/dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml:ro
+
+      - ./fiware/grafana_datasources/grafana_hand_pipeline_stats_demo_ros2.json:/etc/grafana/dashboards/grafana_hand_pipeline_stats_demo_ros2.json:ro
+    restart: unless-stopped
+
+volumes:
+  ros_bags_data:
+    name: operator_tracking_bags
+  mongo_data:
+  timescale-db:
+  grafana_data:
+
+
+
+ 
+# Sistema: PostgreSQL
+# Servidor: timescale-db
+# Usuario: orion
+# Contraseña: orion
+# Base de datos: orion

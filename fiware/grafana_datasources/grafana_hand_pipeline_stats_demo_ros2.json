@@ -1,0 +1,1103 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_ORION",
+      "label": "PostgreSQL (orion)",
+      "description": "Fuente de datos PostgreSQL de la base orion",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Dashboard ARISE para hand_hri_mediapipe_msgs/PipelineStats almacenado en TimescaleDB por Orion-LD. Filtro por entityid. Incluye paneles para los tópicos /demo/entero, /demo/booleano y /demo/color. Paneles Stat de booleano y color corregidos con valores numéricos y mapeos a texto.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 5
+      },
+      "id": 9,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"display:flex; align-items:center; gap:40px;\">\n  <img src=\"https://arise-middleware.eu/wp-content/uploads/2024/03/logo-arise.png\" alt=\"ARISE\" style=\"height:80px;\">\n  <img src=\"https://www.cartif.es/wp-content/uploads/2025/08/cartiflogo-transparentbg1-1024x453.png\" alt=\"CARTIF\" style=\"height:150px;\">\n</div>\n\n<h1>Hand Pipeline — Stats</h1>\n<hr>\n\n<p>Estadísticas del pipeline ROS 2 registradas por Orion-LD en TimescaleDB</p>",
+        "mode": "html"
+      },
+      "pluginVersion": "11.4.0",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "id": 2,
+      "title": "Cámara disponible",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  CASE\n    WHEN lower(compound::jsonb ->> 'camera_available') IN ('true','1') THEN 1\n    WHEN lower(compound::jsonb ->> 'camera_available') IN ('false','0') THEN 0\n    ELSE NULL\n  END AS \"value\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts DESC\nLIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "NO",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "SÍ",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "red"
+              },
+              {
+                "value": 1,
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 12,
+      "title": "Pose TCP disponible",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 5,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  CASE\n    WHEN lower(compound::jsonb ->> 'tcp_pose_available') IN ('true','1') THEN 1\n    WHEN lower(compound::jsonb ->> 'tcp_pose_available') IN ('false','0') THEN 0\n    ELSE NULL\n  END AS \"value\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts DESC\nLIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "NO",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "SÍ",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "red"
+              },
+              {
+                "value": 1,
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 13,
+      "title": "Manos detectadas (actual)",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 5,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  (compound::jsonb ->> 'tracked_hands_count')::integer AS \"value\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts DESC\nLIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "title": "Latencia media actual",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 5,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  (compound::jsonb ->> 'avg_latency_ms')::double precision AS \"value\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts DESC\nLIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "title": "FPS: entrada y procesados",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  (compound::jsonb ->> 'fps_input')::double precision AS \"FPS entrada\",\n  (compound::jsonb ->> 'fps_processed')::double precision AS \"FPS procesados\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts ASC;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "fps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "title": "Latencia media (ms)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 9,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  (compound::jsonb ->> 'avg_latency_ms')::double precision AS \"Latencia media (ms)\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts ASC;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "title": "Número de manos detectadas",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  (compound::jsonb ->> 'tracked_hands_count')::integer AS \"Manos detectadas\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts ASC;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Objetivos de acciones (contadores)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  (compound::jsonb ->> 'action_goals_received')::integer AS \"Recibidos\",\n  (compound::jsonb ->> 'action_goals_accepted')::integer AS \"Aceptados\",\n  (compound::jsonb ->> 'action_goals_rejected')::integer AS \"Rechazados\",\n  (compound::jsonb ->> 'action_goals_canceled')::integer AS \"Cancelados\",\n  (compound::jsonb ->> 'action_goals_succeeded')::integer AS \"Completados\",\n  (compound::jsonb ->> 'action_goals_failed')::integer AS \"Fallidos\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts ASC;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "description": "Contadores acumulados de objetivos de acción. No son eventos por segundo.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "title": "Estados de nodos y selección de manos",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  compound::jsonb ->> 'node_name' AS \"Nodo\",\n  compound::jsonb ->> 'mediapipe_state' AS \"MediaPipe\",\n  compound::jsonb ->> 'landmarks_3d_state' AS \"Landmarks 3D\",\n  compound::jsonb ->> 'palm_plane_state' AS \"Palm plane\",\n  compound::jsonb ->> 'cam_to_base_state' AS \"Cam to base\",\n  compound::jsonb ->> 'hand_selection' AS \"Selección de mano\",\n  compound::jsonb ->> 'tracked_hand_ids' AS \"IDs de manos\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts DESC\nLIMIT 50;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 17,
+      "title": "Cabecera ROS y seguimiento",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 24,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  compound::jsonb -> 'header' AS \"Cabecera ROS\",\n  compound::jsonb ->> 'node_name' AS \"Nodo\",\n  compound::jsonb ->> 'tracked_hand_ids' AS \"IDs de manos\",\n  compound::jsonb ->> 'hand_selection' AS \"Selección de mano\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts DESC\nLIMIT 20;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 18,
+      "title": "Últimos mensajes completos (JSON)",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 41,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ts AS \"time\",\n  compound::jsonb AS \"PipelineStats (JSON)\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline'\n  AND $__timeFilter(ts)\nORDER BY ts DESC\nLIMIT 20;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 19,
+      "title": "",
+      "type": "text",
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 49,
+        "w": 24,
+        "h": 3
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "## Demo ROS 2 · Orion-LD · TimescaleDB\nLecturas de `/demo/entero` (2 s), `/demo/booleano` (5 s) y `/demo/color` (4 s). Valores extraídos de `compound.data`. Los indicadores muestran la última muestra del intervalo seleccionado."
+      },
+      "pluginVersion": "11.4.0"
+    },
+    {
+      "id": 20,
+      "title": "Entero actual · /demo/entero",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "description": "Valor actual Int32 (0 a 9). Publicación prevista cada 2 s.",
+      "gridPos": {
+        "x": 0,
+        "y": 52,
+        "w": 8,
+        "h": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT (compound::jsonb ->> 'data')::integer AS \"Entero\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:DemoEntero:demo_entero'\n  AND $__timeFilter(ts)\n  AND compound IS NOT NULL\n  AND compound::jsonb ? 'data'\nORDER BY ts DESC\nLIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "min": 0,
+          "max": 9
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 21,
+      "title": "Booleano actual · /demo/booleano",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "description": "Muestra el literal true o false, sin convertirlo a 1/0.",
+      "gridPos": {
+        "x": 8,
+        "y": 52,
+        "w": 8,
+        "h": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CASE compound::jsonb ->> 'data'\n    WHEN 'true' THEN 1\n    WHEN 'false' THEN 0\n    ELSE NULL\n  END AS \"Booleano\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:DemoBooleano:demo_booleano'\n  AND $__timeFilter(ts)\n  AND compound IS NOT NULL\n  AND compound::jsonb ? 'data'\nORDER BY ts DESC\nLIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "false",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "true",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 22,
+      "title": "Color actual · /demo/color",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "description": "Último color publicado en std_msgs/msg/String.",
+      "gridPos": {
+        "x": 16,
+        "y": 52,
+        "w": 8,
+        "h": 5
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CASE compound::jsonb ->> 'data'\n    WHEN 'rojo' THEN 1\n    WHEN 'verde' THEN 2\n    WHEN 'azul' THEN 3\n    WHEN 'amarillo' THEN 4\n    WHEN 'naranja' THEN 5\n    ELSE NULL\n  END AS \"Color\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:DemoColor:demo_color'\n  AND $__timeFilter(ts)\n  AND compound IS NOT NULL\n  AND compound::jsonb ? 'data'\nORDER BY ts DESC\nLIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "1": {
+                  "text": "rojo",
+                  "color": "red",
+                  "index": 0
+                },
+                "2": {
+                  "text": "verde",
+                  "color": "green",
+                  "index": 1
+                },
+                "3": {
+                  "text": "azul",
+                  "color": "blue",
+                  "index": 2
+                },
+                "4": {
+                  "text": "amarillo",
+                  "color": "yellow",
+                  "index": 3
+                },
+                "5": {
+                  "text": "naranja",
+                  "color": "orange",
+                  "index": 4
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 23,
+      "title": "Histórico · entero 0–9",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "description": "Secuencia circular de /demo/entero a lo largo del tiempo.",
+      "gridPos": {
+        "x": 0,
+        "y": 57,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS \"time\",\n  (compound::jsonb ->> 'data')::integer AS \"Entero (0–9)\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:DemoEntero:demo_entero'\n  AND $__timeFilter(ts)\n  AND compound IS NOT NULL\n  AND compound::jsonb ? 'data'\nORDER BY ts ASC;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "min": 0,
+          "max": 9,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "id": 24,
+      "title": "Histórico · true / false",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "description": "La gráfica representa false=0 y true=1 para permitir una serie temporal; las etiquetas muestran true/false.",
+      "gridPos": {
+        "x": 12,
+        "y": 57,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS \"time\",\n  CASE compound::jsonb ->> 'data'\n    WHEN 'true' THEN 1\n    WHEN 'false' THEN 0\n    ELSE NULL\n  END AS \"Booleano\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:DemoBooleano:demo_booleano'\n  AND $__timeFilter(ts)\n  AND compound IS NOT NULL\n  AND compound::jsonb ? 'data'\nORDER BY ts ASC;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "min": 0,
+          "max": 1,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "false",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "true",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 2,
+            "fillOpacity": 6,
+            "showPoints": "always",
+            "pointSize": 4,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "id": 25,
+      "title": "Historial de colores",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "description": "Listado cronológico descendente de los colores publicados.",
+      "gridPos": {
+        "x": 0,
+        "y": 66,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS \"time\",\n  compound::jsonb ->> 'data' AS \"Color\"\nFROM public.attributes\nWHERE entityid = 'urn:ngsi-ld:DemoColor:demo_color'\n  AND $__timeFilter(ts)\n  AND compound IS NOT NULL\n  AND compound::jsonb ? 'data'\nORDER BY ts DESC\nLIMIT 60;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "rojo": {
+                  "text": "rojo",
+                  "color": "red",
+                  "index": 0
+                },
+                "verde": {
+                  "text": "verde",
+                  "color": "green",
+                  "index": 1
+                },
+                "azul": {
+                  "text": "azul",
+                  "color": "blue",
+                  "index": 2
+                },
+                "amarillo": {
+                  "text": "amarillo",
+                  "color": "yellow",
+                  "index": 3
+                },
+                "naranja": {
+                  "text": "naranja",
+                  "color": "orange",
+                  "index": 4
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "id": 26,
+      "title": "Últimos mensajes · tres tópicos",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_ORION}"
+      },
+      "description": "Historial unificado de mensajes Integer, Bool y String.",
+      "gridPos": {
+        "x": 12,
+        "y": 66,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_ORION}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ts AS \"time\",\n  CASE entityid\n    WHEN 'urn:ngsi-ld:DemoEntero:demo_entero' THEN '/demo/entero'\n    WHEN 'urn:ngsi-ld:DemoBooleano:demo_booleano' THEN '/demo/booleano'\n    WHEN 'urn:ngsi-ld:DemoColor:demo_color' THEN '/demo/color'\n  END AS \"Tópico\",\n  compound::jsonb ->> 'data' AS \"Valor\"\nFROM public.attributes\nWHERE entityid IN ('urn:ngsi-ld:DemoEntero:demo_entero', 'urn:ngsi-ld:DemoBooleano:demo_booleano', 'urn:ngsi-ld:DemoColor:demo_color')\n  AND $__timeFilter(ts)\n  AND compound IS NOT NULL\n  AND compound::jsonb ? 'data'\nORDER BY ts DESC\nLIMIT 80;",
+          "refId": "A"
+        }
+      ],
+      "transparent": false,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true
+      }
+    }
+  ],
+  "schemaVersion": 40,
+  "tags": [
+    "ARISE",
+    "ROS 2",
+    "PipelineStats",
+    "TimescaleDB",
+    "Demo ROS 2"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "ARISE - Hand Pipeline Stats",
+  "uid": "arise-hand-pipeline-stats",
+  "version": 3,
+  "refresh": "10s"
+}

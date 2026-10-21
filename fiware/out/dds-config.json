@@ -1,0 +1,740 @@
+{
+  "dds": {
+    "ddsmodule": {
+      "dds": {
+        "domain": 0,
+        "allowlist": [
+           {
+            "name": "rt/stats/hand_pipeline"
+          },
+          {
+            "name": "rt/demo/booleano"
+          },
+          {
+            "name": "rt/demo/color"
+          },
+          {
+            "name": "rt/demo/entero"
+          }
+                ],
+        "blocklist": [
+          {
+            "name": "ros_discovery_info"
+          },
+          {
+            "name": "rt/rosout"
+          },
+          {
+            "name": "rt/parameter_events"
+          },
+          {
+            "name": "rt/hand_palm_plane_node/transition_event"
+          },
+          {
+            "name": "rt/hand_landmarks_3d_node/transition_event"
+          },
+          {
+            "name": "rt/hand_mediapipe_node/transition_event"
+          },
+          {
+            "name": "rt/camera/cameraD455/color/image_raw"
+          },
+          {
+            "name": "rt/humans/hands/debug_image"
+          },
+          {
+            "name": "rt/humans/hands/tracked"
+          },
+          {
+            "name": "rt/ur/tcp_pose"
+          },
+          {
+            "name": "rt/hand_mediapipe_node/current_state"
+          },
+          {
+            "name": "rt/hand_landmarks_3d_node/current_state"
+          },
+          {
+            "name": "rt/hand_palm_plane_node/current_state"
+          },
+          {
+            "name": "rt/hand_cam_to_base_node/current_state"
+          },
+          {
+            "name": "rt/hand_change"
+          },
+          {
+            "name": "rt/hand_cam_to_base_node/transition_event"
+          },
+          {
+            "name": "rt/camera/cameraD455/depth/color/points"
+          },
+          {
+            "name": "rt/camera/cameraD455/depth/image_rect_raw/compressed"
+          },
+          {
+            "name": "rt/camera/cameraD455/depth/image_rect_raw/compressedDepth"
+          },
+          {
+            "name": "rt/camera/cameraD455/depth/image_rect_raw"
+          },
+          {
+            "name": "rt/camera/cameraD455/depth/image_rect_raw/theora"
+          },
+          {
+            "name": "rt/camera/cameraD455/depth/camera_info"
+          },
+          {
+            "name": "rt/camera/cameraD455/depth/metadata"
+          },
+          {
+            "name": "rt/camera/cameraD455/extrinsics/depth_to_depth"
+          },
+          {
+            "name": "rt/camera/cameraD455/color/image_raw/compressed"
+          },
+          {
+            "name": "rt/camera/cameraD455/color/image_raw/compressedDepth"
+          },
+          {
+            "name": "rt/camera/cameraD455/color/image_raw/theora"
+          },
+          {
+            "name": "rt/camera/cameraD455/color/camera_info"
+          },
+          {
+            "name": "rt/camera/cameraD455/aligned_depth_to_color/image_raw/compressed"
+          },
+          {
+            "name": "rt/camera/cameraD455/aligned_depth_to_color/image_raw/compressedDepth"
+          },
+          {
+            "name": "rt/camera/cameraD455/aligned_depth_to_color/image_raw"
+          },
+          {
+            "name": "rt/camera/cameraD455/aligned_depth_to_color/image_raw/theora"
+          },
+          {
+            "name": "rt/camera/cameraD455/aligned_depth_to_color/camera_info"
+          },
+          {
+            "name": "rt/camera/cameraD455/color/metadata"
+          },
+          {
+            "name": "rt/camera/cameraD455/extrinsics/depth_to_color"
+          },
+          {
+            "name": "rt/tf_static"
+          },
+          {
+            "name": "rt/test_discovery"
+          },
+          {
+            "name": "rt/robot_description"
+          },
+          {
+            "name": "rt/tf"
+          },
+          {
+            "name": "rt/joint_states"
+          },
+          {
+            "name": "rt/events/read_split"
+          },
+          {
+            "name": "rt/clock"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/roi2d"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/roi2d"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/landmarks2d"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/landmarks2d"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/landmarks3d"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/landmarks3d_base"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/palm_plane_cam"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/palm_plane_base"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/landmarks3d_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/skeleton3d_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/palm_plane_centroid_marker_base"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/palm_plane_centroid_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/palm_plane_normal_marker_base"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/palm_plane_normal_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_0/palm_plane_mesh_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/landmarks3d"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/palm_plane_cam"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/palm_plane_centroid_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/landmarks3d_base"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/palm_plane_normal_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/palm_plane_base"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/landmarks3d_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/palm_plane_centroid_marker_base"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/skeleton3d_marker"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/palm_plane_normal_marker_base"
+          },
+          {
+            "name": "rt/humans/hands/hand_1/palm_plane_mesh_marker"
+          },
+          {
+            "name": "_ros2cli_733/get_type_description"
+          },
+          {
+            "name": "hand_palm_plane_node/describe_parameters"
+          },
+          {
+            "name": "hand_palm_plane_node/get_parameters"
+          },
+          {
+            "name": "hand_mediapipe_node/describe_parameters"
+          },
+          {
+            "name": "hand_palm_plane_node/get_parameter_types"
+          },
+          {
+            "name": "hand_palm_plane_node/list_parameters"
+          },
+          {
+            "name": "orchestrator/describe_parameters"
+          },
+          {
+            "name": "hand_mediapipe_node/get_parameters"
+          },
+          {
+            "name": "hand_cam_to_base_node/describe_parameters"
+          },
+          {
+            "name": "hand_palm_plane_node/set_parameters"
+          },
+          {
+            "name": "hand_landmarks_3d_node/describe_parameters"
+          },
+          {
+            "name": "hand_mediapipe_node/get_parameter_types"
+          },
+          {
+            "name": "hand_landmarks_3d_node/get_parameters"
+          },
+          {
+            "name": "hand_palm_plane_node/set_parameters_atomically"
+          },
+          {
+            "name": "orchestrator/get_parameters"
+          },
+          {
+            "name": "hand_cam_to_base_node/get_parameters"
+          },
+          {
+            "name": "hand_landmarks_3d_node/get_parameter_types"
+          },
+          {
+            "name": "hand_palm_plane_node/get_type_description"
+          },
+          {
+            "name": "hand_mediapipe_node/list_parameters"
+          },
+          {
+            "name": "hand_landmarks_3d_node/list_parameters"
+          },
+          {
+            "name": "orchestrator/get_parameter_types"
+          },
+          {
+            "name": "hand_cam_to_base_node/get_parameter_types"
+          },
+          {
+            "name": "hand_landmarks_3d_node/set_parameters"
+          },
+          {
+            "name": "hand_palm_plane_node/change_state"
+          },
+          {
+            "name": "hand_mediapipe_node/set_parameters"
+          },
+          {
+            "name": "hand_landmarks_3d_node/set_parameters_atomically"
+          },
+          {
+            "name": "hand_palm_plane_node/get_state"
+          },
+          {
+            "name": "hand_landmarks_3d_node/get_type_description"
+          },
+          {
+            "name": "hand_mediapipe_node/set_parameters_atomically"
+          },
+          {
+            "name": "hand_cam_to_base_node/list_parameters"
+          },
+          {
+            "name": "orchestrator/list_parameters"
+          },
+          {
+            "name": "hand_palm_plane_node/get_available_states"
+          },
+          {
+            "name": "hand_landmarks_3d_node/change_state"
+          },
+          {
+            "name": "hand_mediapipe_node/get_type_description"
+          },
+          {
+            "name": "hand_palm_plane_node/get_available_transitions"
+          },
+          {
+            "name": "orchestrator/set_parameters"
+          },
+          {
+            "name": "hand_cam_to_base_node/set_parameters"
+          },
+          {
+            "name": "hand_landmarks_3d_node/get_state"
+          },
+          {
+            "name": "hand_landmarks_3d_node/get_available_states"
+          },
+          {
+            "name": "hand_landmarks_3d_node/get_available_transitions"
+          },
+          {
+            "name": "hand_cam_to_base_node/set_parameters_atomically"
+          },
+          {
+            "name": "orchestrator/set_parameters_atomically"
+          },
+          {
+            "name": "hand_landmarks_3d_node/get_transition_graph"
+          },
+          {
+            "name": "orchestrator/get_type_description"
+          },
+          {
+            "name": "camera/cameraD455/get_parameters"
+          },
+          {
+            "name": "camera/cameraD455/get_parameter_types"
+          },
+          {
+            "name": "camera/cameraD455/set_parameters"
+          },
+          {
+            "name": "camera/cameraD455/set_parameters_atomically"
+          },
+          {
+            "name": "camera/cameraD455/describe_parameters"
+          },
+          {
+            "name": "camera/cameraD455/list_parameters"
+          },
+          {
+            "name": "camera/cameraD455/get_type_description"
+          },
+          {
+            "name": "camera/cameraD455/device_info"
+          },
+          {
+            "name": "hand_palm_plane_node/get_transition_graph"
+          },
+          {
+            "name": "hand_cam_to_base_node/get_type_description"
+          },
+          {
+            "name": "hand_cam_to_base_node/change_state"
+          },
+          {
+            "name": "hand_cam_to_base_node/get_state"
+          },
+          {
+            "name": "hand_cam_to_base_node/get_available_states"
+          },
+          {
+            "name": "hand_cam_to_base_node/get_available_transitions"
+          },
+          {
+            "name": "hand_cam_to_base_node/get_transition_graph"
+          },
+          {
+            "name": "hand_mediapipe_node/change_state"
+          },
+          {
+            "name": "hand_mediapipe_node/get_state"
+          },
+          {
+            "name": "hand_mediapipe_node/get_available_states"
+          },
+          {
+            "name": "hand_mediapipe_node/get_available_transitions"
+          },
+          {
+            "name": "hand_mediapipe_node/get_transition_graph"
+          },
+          {
+            "name": "_ros2cli_508/get_type_description"
+          },
+          {
+            "name": "_ros2cli_658/get_type_description"
+          },
+          {
+            "name": "_ros2cli_504/get_type_description"
+          },
+          {
+            "name": "_ros2cli_582/get_type_description"
+          },
+          {
+            "name": "_ros2cli_579/get_type_description"
+          },
+          {
+            "name": "_ros2cli_481/get_type_description"
+          },
+          {
+            "name": "_ros2cli_507/get_type_description"
+          },
+          {
+            "name": "_ros2cli_25/get_type_description"
+          },
+          {
+            "name": "_ros2cli_546/get_type_description"
+          },
+          {
+            "name": "rosbag2_player/get_parameters"
+          },
+          {
+            "name": "rosbag2_player/get_parameter_types"
+          },
+          {
+            "name": "rosbag2_player/set_parameters"
+          },
+          {
+            "name": "rosbag2_player/set_parameters_atomically"
+          },
+          {
+            "name": "rosbag2_player/describe_parameters"
+          },
+          {
+            "name": "rosbag2_player/list_parameters"
+          },
+          {
+            "name": "rosbag2_player/get_type_description"
+          },
+          {
+            "name": "rosbag2_player/pause"
+          },
+          {
+            "name": "rosbag2_player/resume"
+          },
+          {
+            "name": "rosbag2_player/toggle_paused"
+          },
+          {
+            "name": "rosbag2_player/is_paused"
+          },
+          {
+            "name": "rosbag2_player/get_rate"
+          },
+          {
+            "name": "rosbag2_player/set_rate"
+          },
+          {
+            "name": "rosbag2_player/play"
+          },
+          {
+            "name": "rosbag2_player/play_next"
+          },
+          {
+            "name": "rosbag2_player/burst"
+          },
+          {
+            "name": "rosbag2_player/seek"
+          },
+          {
+            "name": "rosbag2_player/stop"
+          },
+          {
+            "name": "_ros2cli_796/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1093/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1309/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1523/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1687/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1769/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1851/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1961/get_type_description"
+          },
+          {
+            "name": "_ros2cli_2190/get_type_description"
+          },
+          {
+            "name": "_ros2cli_2272/get_type_description"
+          },
+          {
+            "name": "_ros2cli_2386/get_type_description"
+          },
+          {
+            "name": "_ros2cli_2553/get_type_description"
+          },
+          {
+            "name": "_ros2cli_2631/get_type_description"
+          },
+          {
+            "name": "_ros2cli_2709/get_type_description"
+          },
+          {
+            "name": "_ros2cli_2812/get_type_description"
+          },
+          {
+            "name": "_ros2cli_3034/get_type_description"
+          },
+          {
+            "name": "_ros2cli_3137/get_type_description"
+          },
+          {
+            "name": "_ros2cli_4053/get_type_description"
+          },
+          {
+            "name": "_ros2cli_5631/get_type_description"
+          },
+          {
+            "name": "_ros2cli_5713/get_type_description"
+          },
+          {
+            "name": "_ros2cli_5795/get_type_description"
+          },
+          {
+            "name": "lifecycle_control_client/describe_parameters"
+          },
+          {
+            "name": "lifecycle_control_client/get_parameters"
+          },
+          {
+            "name": "lifecycle_control_client/get_parameter_types"
+          },
+          {
+            "name": "lifecycle_control_client/list_parameters"
+          },
+          {
+            "name": "lifecycle_control_client/set_parameters"
+          },
+          {
+            "name": "lifecycle_control_client/set_parameters_atomically"
+          },
+          {
+            "name": "lifecycle_control_client/get_type_description"
+          },
+          {
+            "name": "_ros2cli_5987/get_type_description"
+          },
+          {
+            "name": "_ros2cli_6069/get_type_description"
+          },
+          {
+            "name": "_ros2cli_6176/get_type_description"
+          },
+          {
+            "name": "_ros2cli_6258/get_type_description"
+          },
+          {
+            "name": "_ros2cli_526/get_type_description"
+          },
+          {
+            "name": "_ros2cli_682/get_type_description"
+          },
+          {
+            "name": "_ros2cli_760/get_type_description"
+          },
+          {
+            "name": "_ros2cli_838/get_type_description"
+          },
+          {
+            "name": "_ros2cli_916/get_type_description"
+          },
+          {
+            "name": "_ros2cli_send_goal_hand_hri_mediapipe_msgs_action_LifecycleControl/describe_parameters"
+          },
+          {
+            "name": "_ros2cli_send_goal_hand_hri_mediapipe_msgs_action_LifecycleControl/get_parameters"
+          },
+          {
+            "name": "_ros2cli_send_goal_hand_hri_mediapipe_msgs_action_LifecycleControl/get_parameter_types"
+          },
+          {
+            "name": "_ros2cli_send_goal_hand_hri_mediapipe_msgs_action_LifecycleControl/list_parameters"
+          },
+          {
+            "name": "_ros2cli_send_goal_hand_hri_mediapipe_msgs_action_LifecycleControl/set_parameters"
+          },
+          {
+            "name": "_ros2cli_send_goal_hand_hri_mediapipe_msgs_action_LifecycleControl/set_parameters_atomically"
+          },
+          {
+            "name": "_ros2cli_send_goal_hand_hri_mediapipe_msgs_action_LifecycleControl/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1124/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1280/get_type_description"
+          },
+          {
+            "name": "_ros2cli_2464/get_type_description"
+          },
+          {
+            "name": "demo_publicadores/describe_parameters"
+          },
+          {
+            "name": "demo_publicadores/get_parameters"
+          },
+          {
+            "name": "demo_publicadores/get_parameter_types"
+          },
+          {
+            "name": "demo_publicadores/list_parameters"
+          },
+          {
+            "name": "demo_publicadores/set_parameters"
+          },
+          {
+            "name": "demo_publicadores/set_parameters_atomically"
+          },
+          {
+            "name": "demo_publicadores/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1032/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1212/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1392/get_type_description"
+          },
+          {
+            "name": "_ros2cli_1572/get_type_description"
+          },
+          {
+            "name": "_ros2cli_606/get_type_description"
+          },
+          {
+            "name": "_ros2cli_501/get_type_description"
+          },
+          {
+            "name": "_ros2cli_603/get_type_description"
+          },
+          {
+            "name": "_ros2cli_783/get_type_description"
+          },
+          {
+            "name": "_ros2cli_765/get_type_description"
+          },
+          {
+            "name": "lifecycle_control"
+          },
+          {
+            "name": "hand_change_action"
+          }
+        ]
+      },
+      "topics": {
+        "name": "*",
+        "qos": {
+          "durability": "TRANSIENT_LOCAL",
+          "history-depth": 10
+        }
+      },
+      "ddsenabler": null,
+      "specs": {
+        "threads": 12,
+        "logging": {
+          "stdout": false,
+          "verbosity": "info"
+        }
+      }
+    },
+    "ngsild": {
+      "typesDirectory": "/opt/dds/types",
+      "syncTimeoutMs": 5000,
+      "topics": {
+        "rt/stats/hand_pipeline": {
+          "entityId": "urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline",
+          "entityType": "StatsHandPipeline",
+          "attribute": "stats_hand_pipeline"
+        },
+        "rt/demo/color": {
+          "entityId": "urn:ngsi-ld:DemoColor:demo_color",
+          "entityType": "DemoColor",
+          "attribute": "demo_color"
+        },
+        "rt/demo/entero": {
+          "entityId": "urn:ngsi-ld:DemoEntero:demo_entero",
+          "entityType": "DemoEntero",
+          "attribute": "demo_entero"
+        },
+        "rt/demo/booleano": {
+          "entityId": "urn:ngsi-ld:DemoBooleano:demo_booleano",
+          "entityType": "DemoBooleano",
+          "attribute": "demo_booleano"
+        }
+      },
+      "services": {},
+      "actions": {}
+    }
+  }
+}

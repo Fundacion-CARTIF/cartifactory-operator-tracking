@@ -1,437 +1,419 @@
 <p align="center">
 
-<!-- ---------- TOP IMAGE ---------- -->
-
-<a href="https://www.cartif.es/en/human-robot-collaboration-pilot-plant-cartifactory/">
-    <img src="images/cartifactory-transparent.png" alt="Top image" height="100"/>
+  <!-- ---------- TOP IMAGE ---------- -->
+  <a href="https://www.cartif.es/en/human-robot-collaboration-pilot-plant-cartifactory/">
+    <img src="docs/assets/cartifactory-transparent.png" alt="Top image" height="100"/>
   </a>
   <!-- ---------- CARTIF logo ---------- -->
   <a href="https://www.cartif.es/en/home/">
-    <img src="images/CARTIF_transparente.png" height="100">
+    <img src="docs/assets/CARTIF_transparente.png" height="100">
   </a>
 
 </p>
 
-<p align="center">
-  <!-- ---------- ARISE logo ---------- -->
-  <!-- Light mode -->
-  <img src="images/ARISE_logo-light_mode.png#gh-light-mode-only" alt="Logo for light mode" height="60"/>
-  <!-- Dark mode -->
-  <img src="images/ARISE_logo-dark_mode.png#gh-dark-mode-only" alt="Logo for dark mode" height="60"/>
-</p>
 
-<p align="center">
-  These 
-  Modules are part of the ARISE Middleware<br>
-  <a href="https://arise-middleware.eu/">ARISE Middleware site</a>
-</p>
 
-<hr>
+# CARTIFactory, Middleware de Interacción Humano-Robot en Industria 5.
 
 [![vulcanexus](https://img.shields.io/badge/Vulcanexus%20Version-Jazzy-%230895CD?style=flat)](https://github.com/eProsima/vulcanexus)
-[![ubuntu24](https://img.shields.io/badge/Ubuntu-24.04-%23E95420?style=flat&logo=ubuntu)](https://releases.ubuntu.com/24.04/)
+[![ubuntu24](https://img.shields.io/badge/Ubuntu-24.04-%23E95420?style=flat&logo=ubuntu
+)](https://releases.ubuntu.com/24.04/)
 
-# General Overview
+# Contenidos
+- [CARTIFactory, Middleware de Interacción Humano-Robot en Industria 5.](#cartifactory-middleware-de-interacción-humano-robot-en-industria-5)
+- [Contenidos](#contenidos)
+- [Inicio](#inicio)
+    - [1. Construir la imagen](#1-construir-la-imagen)
+  - [2 Definir la entrada](#2-definir-la-entrada)
+    - [2.1 Sin cámara física: utilizar un rosbag](#21-sin-cámara-física-utilizar-un-rosbag)
+      - [Preparar las grabaciones y arrancar](#preparar-las-grabaciones-y-arrancar)
+      - [Consultar y reproducir](#consultar-y-reproducir)
+    - [2.2 Con cámara física: añadir el acceso USB](#22-con-cámara-física-añadir-el-acceso-usb)
+  - [3. Configurar y activar el pipeline en ambos modos](#3-configurar-y-activar-el-pipeline-en-ambos-modos)
+  - [4. Cambiar de modo y comprobar el estado](#4-cambiar-de-modo-y-comprobar-el-estado)
+  - [5. Red, RViz y servicios FIWARE](#5-red-rviz-y-servicios-fiware)
+  - [Nodos de ROS2](#nodos-de-ros2)
 
-[ARISE](https://arise-middleware.eu/) aims towards making industrial HRI more accessible and cost-effective, in particular in healthcare, intra-logistics and manufacturing sectors. These modules hope to present an integration between [FIWARE Orion Context Broker](https://fiware-orion.readthedocs.io/en/master/) and [eProsima Vulcanexus](https://vulcanexus.org/) to enable context-aware robotic and industrial applications, alongside [ROS4HRI](https://ros4hri.github.io/) as an open-source ROS standard and a set of ROS packages to facilitate the development of Human-Robot Interaction (HRI) capabilities on robots.
+# Inicio
 
-> [!TIP]
-> Check here the rest of our Testing and Experimenting Facility [CARTIFactory](https://fundacion-cartif.github.io/CARTIFactory/)!
+El módulo puede recibir datos de una **cámara RealSense conectada por USB** o de un **rosbag grabado previamente**. Se utiliza la misma imagen Docker en ambos casos:
 
-## Features
+| Modo | Archivos Compose |
+| --- | --- |
+| Sin cámara física / reproducción de rosbag | `docker-compose.yml` |
+| Con cámara RealSense USB | `docker-compose.yml` + `docker-compose-usb.yml` |
 
-- Real-time hand detection using MediaPipe Hands
-- 2D and 3D hand landmark estimation
-- Dynamic multi-hand tracking pipeline
-- Palm plane estimation and normal computation
-- Camera-to-robot base frame transformation
-- ROS2 Lifecycle Node architecture
-- Runtime hand selection (left, right, both)
-- Custom ROS2 interfaces and actions
-- Built-in monitoring and diagnostics interface
+Ejecuta los comandos Docker desde la **raíz del repositorio**, en PowerShell, la terminal de VS Code o una terminal Linux con acceso a Docker. Los comandos ROS 2 se ejecutan **dentro del contenedor**.
 
-## Table of Contents
+> [!IMPORTANT]
+> El Compose principal monta `./ros_bags:/ros_bags_source:ro` como origen de importación y el volumen persistente `ros_bags_data:/ros_bags` para reproducir. **No debe incluir el montaje de `/dev/bus/usb`**. Ese montaje pertenece exclusivamente a `docker-compose-usb.yml`. De lo contrario, el arranque sin cámara también exigirá el dispositivo USB.
+>
+> Los Compose arrancan el pipeline de los nodos del ciclo de vida ([*lifecycle* o *managed nodes*](https://design.ros2.org/articles/node_lifecycle.html)). **No lanzan automáticamente el driver de RealSense ni reproducen un rosbag.**
 
-- [General Overview](#general-overview)
+### 1. Construir la imagen
 
-  - [Features](#features)
-- [Getting started](#getting-started)
-
-  - [Dependencies](#dependencies)
-- [What is included in the module](#what-is-included-in-the-module)
-
-  - [Hand Mediapipe node](#2d-hand-detection-hand_mediapipe_node)
-  - [Hand landmarks 3D node](#hand-landmarks-3d-node-hand_landmarks_3d_node)
-  - [Hand palm plane node](#hand-palm-plane-node-hand_palm_plane_node)
-  - [Camera to robot frame hand transformation ](#camera-to-robot-frame-hand-transformation-hand_cam_to_base_node)
-- [Custom Interfaces](#custom-interfaces)
-- [Running the Module](#running-the-module)
-
-  - [Launch Arguments](#launch-arguments)
-
-# Getting started
-
-This module provides a complete hand-tracking pipeline, including 2D hand detection, 3D landmark reconstruction, palm plane estimation and transformation into the robot reference frame.
-
-<p align="left">
-  <!-- ---------- REUSABLE MODULE DIAGRAM ---------- -->
-  <!-- Light mode -->
-  <img src="images/Diagram_light.png#gh-light-mode-only" alt="EU Funding for light mode" height="500"/>
-
-<!-- Dark mode -->
-
-<img src="images/Diagram_dark.png#gh-dark-mode-only" alt="EU Funding for dark mode" height="500"/>
-
-</p>
-
-## Dependencies
-
-All Python dependencies are included inside the `requirements.txt` file. To install, execute on terminal:
+La primera vez, o después de modificar el Dockerfile, las dependencias o el código que se copia y compila dentro de la imagen:
 
 ```bash
-pip install -r /requirements.txt
+docker compose -f docker-compose.yml build operator_tracking
 ```
 
-This package is dependent on other ROS2 interfaces:
+Docker reutiliza las capas que no han cambiado. No es necesario reconstruir la imagen por conectar o desconectar la cámara, cambiar de modo o añadir nuevas grabaciones a `ros_bags/`.
+
+## 2 Definir la entrada
+
+Como se ha indicado en el apartado anterior, es posible probar este módulo utilizando una cámara Realsense conectada al ordenador (cosa que haremos nosotros en le workshop). Para facilitar la reproducibilidad y que podáis ver como funciona en vuestros esquipos, os proporcionamos una serie de ros bags, que podéis descargar del [siguiente enlace]().
+
+### 2.1 Sin cámara física: utilizar un rosbag
+
+#### Preparar las grabaciones y arrancar
+
+Guarda cada grabación completa en `ros_bags/<nombre_del_bag>/`, dentro del repositorio. Debe incluir `metadata.yaml` y todos los archivos de datos que este referencia (`.mcap` o `.db3`).
+
+El Compose monta dos rutas distintas dentro del contenedor:
+
+| Ruta | Almacenamiento | Uso |
+| --- | --- | --- |
+| `/ros_bags_source` | Carpeta `./ros_bags` del host, montada en solo lectura. | Origen para importar grabaciones. |
+| `/ros_bags` | Volumen persistente de Docker `operator_tracking_bags`. | Lectura y reproducción dentro del almacenamiento Linux de Docker. |
+
+El volumen se crea si todavía no existe y se reutiliza en los siguientes arranques, tanto en modo cámara como en modo rosbag. No es necesario añadir un Compose específico para los bags.
+
+Arranca solo el módulo, reutilizando la imagen construida:
 
 ```bash
-sudo apt install \
-  ros-${ROS_DISTRO}-vision-msgs \
-  ros-${ROS_DISTRO}-cv-bridge \
-  ros-${ROS_DISTRO}-hri-msgs
+docker compose -f docker-compose.yml up -d --no-deps --no-build operator_tracking
 ```
+>[!warning] Recuerda
+No añadas `docker-compose-usb.yml` ni ejecutes `usbipd attach` para este modo.
 
-# What is included in the module
+El entrypoint importa automáticamente los archivos nuevos desde `/ros_bags_source/` hacia `/ros_bags/` mediante `rsync -a --ignore-existing`, antes de lanzar el pipeline. La primera importación de grabaciones grandes puede tardar varios minutos. Los archivos ya existentes se omiten; si sustituyes un archivo conservando el mismo nombre, no se actualizará automáticamente.
 
-## 2D Hand detection (`hand_mediapipe_node`)
-
-ROS2 Lifecycle node responsible for detecting and tracking human hands from RGB images using MediaPipe Hands.
-
-This node is the entry point of the hand-processing pipeline. It receives RGB images, performs hand landmark inference, identifies left and right hands, and publishes normalized 2D hand landmarks. The node also supports runtime hand selection (left, right, or both) through the orchestrator action interface.
-
-### Inputs
-
-* RGB camera images
-
-### Outputs
-
-* Tracked hand identifiers
-* 2D hand landmarks
-* 2D hand ROIs
-* Debug visualization image
-
-### Interfaces
-
-This node has the following interfaces:
-
-| Interface  | Topic                              | Description                                                                                                                   |
-| ---------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Publisher  | `/humans/hands/tracked`          | List of currently tracked hand identifiers.                                                                                   |
-| Publisher  | `/humans/hands/<id>/landmarks2d` | Normalized 2D landmarks for each detected hand.                                                                               |
-| Publisher  | `/humans/hands/<id>/roi2d`       | Normalized 2D bounding box for each detected hand.                                                                            |
-| Publisher  | `/humans/hands/debug_image`      | Debug visualization image with rendered landmarks.                                                                            |
-| Subscriber | *`*image_topic`*               | RGB image topic configured through the `image_topic` parameter. Default value is `/camera/<camera_name>/color/image_raw`. |
-
-### Runtime Hand Selection
-
-The hand detection node supports runtime selection of the hands to be tracked:
-
-- `left`
-- `right`
-- `both`
-
-The selection can be modified while the node is active through the `HandChange` action exposed by the orchestrator.
-
-No lifecycle transition or node restart is required.
-
-## Hand landmarks 3D node (`hand_landmarks_3d_node`)
-
-ROS2 Lifecycle node that reconstructs 3D hand landmarks from RGB-D information.
-
-The node synchronizes 2D hand detections with depth images and camera intrinsic parameters to estimate the 3D position of each MediaPipe landmark in the camera reference frame. Processing pipelines are created dynamically for every tracked hand.
-
-### Inputs
-
-* 2D hand landmarks
-* Depth image
-* CameraInfo
-
-### Outputs
-
-* 3D hand landmarks
-* RViz markers
-* Optional point clouds
-
-### Interfaces
-
-| Interface  | Topic                                        | Description                                                                                                                         |
-| ---------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Subscriber | `/humans/hands/tracked`                    | List of currently tracked hand identifiers.                                                                                         |
-| Subscriber | `/humans/hands/<id>/landmarks2d`           | Normalized 2D landmarks for each detected hand.                                                                                     |
-| Subscriber | `*image_topic`                             | RGB image topic configured through the `image_topic` parameter. Default value is `/camera/<camera_name>/color/image_raw`.       |
-| Subscriber | `*camera_info_topic`                       | Camera intrinsic parameters used for 3D projection. Default value is `/camera/<camera_name>/aligned_depth_to_color/camera_info`. |
-| Publisher  | `/humans/hands/<id>/landmarks3d`           | 3D hand landmarks expressed in the camera reference frame.                                                                          |
-| Publisher  | `/humans/hands/<id>/landmarks3d_marker`    | RViz visualization of 3D landmarks.                                                                                                 |
-| Publisher  | `/humans/hands/<id>/skeleton3d_marker`     | RViz visualization of the hand skeleton.                                                                                            |
-| Publisher* | *`/humans/hands/<id>/landmarks3d_cloud`* | Optional PointCloud2 representation of hand landmarks.                                                                              |
-
-> [!Important]
-> Processing pipelines are created dynamically for each tracked hand. When a new hand identifier appears in `/humans/hands/tracked`, the node automatically creates the required subscribers, synchronizers and publishers. Resources are released when the hand is no longer tracked.
-
-### 3D Reconstruction
-
-For each valid 2D landmark, the node:
-
-1. Converts normalized image coordinates into pixel coordinates.
-2. Retrieves the corresponding depth value.
-3. Uses the camera intrinsic parameters to deproject the pixel into a 3D point.
-4. Publishes the resulting landmark in the camera reference frame.
-
-Invalid depth measurements are automatically discarded and marked as invalid in the output message.
-
-## Hand palm plane node (`hand_palm_plane_node`)
-
-ROS2 Lifecycle node responsible for estimating the palm plane and its normal vector from 3D hand landmarks.
-
-The node fits a plane using a configurable subset of hand landmarks and provides a stable estimation of palm orientation. This information can be used for gesture analysis, human-robot interaction, pointing estimation, or grasp intention inference.
-
-> [!Important]
-> The node dynamically creates and removes per-hand processing pipelines according to the currently tracked hands.
-
-### Inputs
-
-* 3D hand landmarks
-
-### Outputs
-
-* Palm plane estimation
-* Palm centroid marker
-* Palm normal marker
-* Palm surface mesh (optional)
-
-### Interfaces
-
-| Interface  | Topic                                             | Description                                                     |
-| ---------- | ------------------------------------------------- | --------------------------------------------------------------- |
-| Subscriber | `/humans/hands/tracked`                         | List of currently tracked hand identifiers.                     |
-| Subscriber | `/humans/hands/<id>/landmarks3d`                | 3D hand landmarks expressed in the camera reference frame.      |
-| Publisher  | `/humans/hands/<id>/palm_plane_cam`             | Estimated palm plane expressed in the camera reference frame.   |
-| Publisher  | `/humans/hands/<id>/palm_plane_centroid_marker` | RViz marker representing the palm centroid.                     |
-| Publisher  | `/humans/hands/<id>/palm_plane_normal_marker`   | RViz marker representing the palm normal vector.                |
-| Publisher* | `/humans/hands/<id>/palm_plane_mesh_marker`     | Optional RViz mesh visualization of the estimated palm surface. |
-
-### Plane Estimation
-
-The palm plane is estimated from a configurable subset of landmarks using least-squares plane fitting based on Singular Value Decomposition (SVD).
-
-The resulting normal vector can be stabilized through:
-
-- Initial camera-facing orientation
-- Sign consistency enforcement
-- Angular step limiting
-- Exponential moving average filtering
-
-### Mesh Generation
-
-When enabled, the node projects valid landmarks onto the estimated plane, computes a 2D convex hull, triangulates the polygon, and publishes a `TRIANGLE_LIST` RViz marker representing the palm surface.
-
-## Camera to robot frame hand transformation (`hand_cam_to_base_node`)
-
-ROS2 Lifecycle node that transforms hand-related information from the camera reference frame into the robot base frame.
-
-Using the current robot TCP pose and a calibrated camera-to-TCP transformation, the node computes hand landmarks and palm planes expressed in robot coordinates. This enables downstream robotic applications to reason directly in the robot workspace.
-
-### Inputs
-
-* Hand landmarks in camera frame
-* Palm plane in camera frame
-* TCP pose
-
-### Outputs
-
-* Hand landmarks in robot base frame
-* Palm plane in robot base frame
-* Optional RViz markers
-
-### Interfaces
-
-This node has the following interfaces:
-
-| Interface  | Topic                                   | Description                                                                                                 |
-| ---------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Subscriber | `/humans/hands/tracked`               | List of currently tracked hand identifiers.                                                                 |
-| Subscriber | `/humans/hands/<id>/landmarks3d`      | 3D hand landmarks expressed in the camera reference frame.                                                  |
-| Subscriber | `/humans/hands/<id>/palm_plane_cam`   | Palm plane estimation expressed in the camera reference frame.                                              |
-| Subscriber | `*tcp_pose_topic`                     | Current robot TCP pose used to compute the camera-to-base transformation. Default value is `/ur/tcp_pose` |
-| Publisher  | `/humans/hands/<id>/landmarks3d_base` | 3D hand landmarks transformed into the robot base reference frame.                                          |
-| Publisher  | `/humans/hands/<id>/palm_plane_base`  | Palm plane transformed into the robot base reference frame.                                                 |
-| Publisher* | `/humans/hands/<id>/centroid_marker`  | Optional RViz marker showing the palm centroid in the robot base frame.                                     |
-| Publisher* | `/humans/hands/<id>/normal_marker`    | Optional RViz marker showing the palm normal vector in the robot base frame.                                |
-
-> [!Important]
->
-> The node dynamically creates and removes processing pipelines for each tracked hand. A dedicated transformation pipeline is instantiated whenever a new hand identifier appears in `/humans/hands/tracked`.
-
-### Coordinate Transformation
-
-The node combines:
-
-- The current robot TCP pose
-- The calibrated camera-to-TCP transformation (`T_cam_tcp`)
-- The hand landmarks and palm plane estimated in the camera frame
-
-to compute the corresponding hand representation in the robot base frame.
-
-This allows downstream robotic applications to directly use hand positions, palm centroids and palm normals without requiring additional coordinate transformations.
-
-# Custom Interfaces
-
-A `custom_interfaces` package is included, to handle the custom message for the pipeline information and the goal
-
-## Hand Tracking Message
-
-Message definition for representing a tracked hand using MediaPipe landmarks:
-![Reusable module dashboard](images/hand_landmarks.png)
-
-| Field          | Type                                         | Description                                                                       |
-| -------------- | -------------------------------------------- | --------------------------------------------------------------------------------- |
-| `id`         | `string`                                   | Unique identifier for the detected hand or tracked person.                        |
-| `handedness` | `uint8`                                    | Indicates whether the detected hand is left or right.                             |
-| `landmarks`  | `hri_msgs/NormalizedPointOfInterest2D[21]` | Array containing the 21 MediaPipe hand landmarks in normalized image coordinates. |
-| `confidence` | `float32`                                  | Confidence score of the hand detection/tracking.                                  |
-
-> [!Note]
-> Handedness Convention
->
-> | Constant               | Value | Description          |
-> | ---------------------- | ----- | -------------------- |
-> | `HANDEDNESS_UNKNOWN` | `0` | Unknown handedness.  |
-> | `HANDEDNESS_LEFT`    | `1` | Left hand detected.  |
-> | `HANDEDNESS_RIGHT`   | `2` | Right hand detected. |
-
-## Hand Tracking 3D Message
-
-Message definition for representing a tracked hand in 3D space using MediaPipe landmarks.
-
-| Field          | Type                        | Description                                                                          |
-| -------------- | --------------------------- | ------------------------------------------------------------------------------------ |
-| `id`         | `string`                  | Unique identifier for the detected hand or tracked person.                           |
-| `handedness` | `uint8`                   | Indicates whether the detected hand is left or right.                                |
-| `confidence` | `float32`                 | Confidence score of the handedness classifier. If unavailable, use `NaN` or `0`. |
-| `landmarks`  | `geometry_msgs/Point[21]` | Array containing the 21 MediaPipe hand landmarks in normalized image coordinates.    |
-| `valid`      | `bool[21]`                | Indicates whether each landmark is valid/tracked.                                    |
-
-> [!Note]
-> Landmark coordinates are expressed in 3D space using `geometry_msgs/Point`. The `valid` array allows checking whether each landmark has been successfully estimated. `valid[i] == false` means landmark `i` should not be considered reliable.
-
-# Landmarks
-
-## Pipeline Statistics
-
-The module includes a monitoring and diagnostics interface (we use a custom interface `custom_interfaces/PipelineStats`) that aggregates runtime information from the complete hand-tracking pipeline.
-
-This information is intended to be forwarded to external monitoring systems such as FIWARE Orion Context Broker and can be used for system supervision, performance evaluation and deployment diagnostics.
-
-| Field   | Type    | Description |
-| ------- | ------- | ----------- |
-| `---` | `---` | ---         |
-
-> [!Note]
->
-> The Pipeline Statistics interface is currently under active development and may evolve in future releases. Additional monitoring metrics and diagnostic fields will be incorporated as the reusable module matures.
-
-## Lifecycle Architecture
-
-All processing nodes are implemented as ROS2 Lifecycle Nodes.
-
-At startup, all nodes remain in the `unconfigured` state. The module includes an `orchestrator` node that exposes ROS2 Actions for managing the lifecycle of the complete pipeline.
-
-Supported lifecycle transitions:
-
-- configure
-- activate
-- deactivate
-- cleanup
-- shutdown
-
-This architecture allows external applications to start, stop and reconfigure the entire hand-tracking pipeline without restarting the system.
-
-## Lifecycle action
-
-All nodes will start as `unconfigured` upon launching the module. To unify the initialization of the system, we have created an `orchestrator` that hosts two actions, the first one being an action to change state to all the nodes in the correct order.
-
-### Goal
-
-| Field            | Type       | Description                            |
-| ---------------- | ---------- | -------------------------------------- |
-| `target_state` | `string` | State we want to change the system to. |
-
-### Result
-
-| Field          | Type       | Description                                                    |
-| -------------- | ---------- | -------------------------------------------------------------- |
-| `success`    | `bool`   | Indicates whether the action execution completed successfully. |
-| `result_msg` | `string` | Final message resulting from the execution of the action.      |
-
-### Feedback
-
-| Field        | Type       | Description                                                                  |
-| ------------ | ---------- | ---------------------------------------------------------------------------- |
-| `feedback` | `string` | Informational message describing the current status of the action execution. |
-
-## Hand change action
-
-The second action from the `orchestrator` is created for changing which hand is going to be tracked. Options are **left**, **right** or **both**.
-
-### Goal
-
-| Field    | Type       | Description                                          |
-| -------- | ---------- | ---------------------------------------------------- |
-| `hand` | `string` | Hand we want to track. Options: (left, right, both). |
-
-### Result
-
-| Field          | Type       | Description                                                    |
-| -------------- | ---------- | -------------------------------------------------------------- |
-| `success`    | `bool`   | Indicates whether the action execution completed successfully. |
-| `result_msg` | `string` | Final message resulting from the execution of the action.      |
-
-### Feedback
-
-| Field        | Type       | Description                                                                  |
-| ------------ | ---------- | ---------------------------------------------------------------------------- |
-| `feedback` | `string` | Informational message describing the current status of the action execution. |
-
-# Running the Module
-
-The launch file starts the full hand-tracking pipeline:
+Sigue el arranque desde el host:
 
 ```bash
-ros2 launch hand_hri_mediapipe hand_pipeline_lifecycle.launch.py
+docker compose -f docker-compose.yml logs -f operator_tracking
 ```
 
-## Launch Arguments
+**Espera al mensaje siguiente antes de reproducir un bag:**
 
-| Argument        | Default                         | Type                 | Description                                                                                                                                                 |
-| --------------- | ------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `camera_name` | `cameraD455`                  | string               | Camera namespace used to build the color, depth, and camera info topics.                                                                                    |
-| `T_tcp_cam`   | `identity/calibrated default` | float array `[16]` | Homogeneous transformation matrix from the robot TCP frame to the camera frame, used to transform hand landmarks and palm planes into the robot base frame. |
+```text
+[entrypoint] Grabaciones disponibles en /ros_bags.
+```
 
-> [!Important]
+Después aparecerán los logs de los nodos del pipeline. Pulsa `Ctrl+C` para salir del seguimiento de logs; esto no detiene el contenedor.
+
+> [!IMPORTANT]
+> Que Docker muestre el contenedor como `Started` o `Running` no significa que la importación haya terminado. Incluso es posible entrar con `docker exec` mientras se copian los bags.
 >
-> The `T_tcp_cam` matrix must be adapted to the real camera-to-robot calibration of the setup. An incorrect calibration will produce incorrect hand landmark and palm plane positions in the robot base frame.
+> La carpeta y `metadata.yaml` pueden aparecer antes que el archivo de datos definitivo. Un nombre como `.robot_camera_20261020_133206_0.mcap.Fb89Dr` es un archivo temporal de `rsync`. No lo renombres: espera a que termine la copia. Si hay errores o reinicios continuos, revisa los logs.
+>
+> Las grabaciones copiadas sobreviven a la recreación del contenedor. `docker compose down -v` elimina los volúmenes gestionados por ese Compose, incluidas estas copias. Los originales de `./ros_bags` permanecen en el anfitrión.
 
----
+#### Consultar y reproducir
 
-This project has received funding from **Horizon Europe** research and innovation programme under grant agreement **no. 101135784**.
+Abre una terminal del contenedor:
 
-<p align="left">
-  <!-- ---------- ARISE logo ---------- -->
-  <!-- Light mode -->
-  <img src="images/EN_Co_fundedbytheEU_RGB_Monochrome.png#gh-light-mode-only" alt="EU Funding for light mode" height="100"/>
+```bash
+docker compose -f docker-compose.yml exec operator_tracking bash
+```
 
-<!-- Dark mode -->
+Dentro, comprueba la grabación antes de reproducirla:
 
-<img src="images/EN_Co_fundedbytheEU_RGB_NEG.png#gh-dark-mode-only" alt="EU Funding for dark mode" height="100"/>
+```bash
+ros2 bag info /ros_bags/robot_camera_20261020_133206
+```
 
-</p>
+El siguiente comando se ha probado con esta grabación. Sustituye el nombre de la carpeta por el de tu bag y adapta la lista si sus topics son diferentes:
+
+```bash
+ros2 bag play /ros_bags/robot_camera_20261020_133206 \
+  --clock \
+  --read-ahead-queue-size 500 \
+  --start-paused \
+  --topics \
+    /camera/cameraD455/color/image_raw \
+    /camera/cameraD455/color/camera_info \
+    /camera/cameraD455/aligned_depth_to_color/image_raw \
+    /camera/cameraD455/aligned_depth_to_color/camera_info \
+    /ur/tcp_pose \
+    /tf \
+    /tf_static \
+    /robot_description
+```
+
+El reproductor arranca **pausado**. Deja esa terminal abierta, prepara el módulo y RViz en otras terminales y pulsa **Espacio** en la terminal del bag para comenzar. Espacio alterna pausa y reproducción; `Ctrl+C` detiene el reproductor.
+
+| Opción | Función |
+| --- | --- |
+| `--clock` | Publica `/clock` con el tiempo de reproducción para los nodos que tengan `use_sim_time=true`. No cambia los timestamps guardados en los mensajes. |
+| `--read-ahead-queue-size 500` | Configura una cola de lectura anticipada de 500 mensajes. No son 500 MB ni 500 fotogramas; el consumo de memoria depende del tamaño de los mensajes. |
+| `--start-paused` | Permite preparar los consumidores antes de comenzar la reproducción. |
+| `--topics` | Limita la reproducción a los topics enumerados. Reduce el tráfico publicado, aunque el formato de almacenamiento puede requerir leer o descomprimir bloques que contengan otros topics. |
+
+Los topics seleccionados cumplen estas funciones:
+
+| Topics | Uso |
+| --- | --- |
+| `.../color/image_raw` y `.../color/camera_info` | Imagen RGB para detección y datos de calibración. |
+| `.../aligned_depth_to_color/image_raw` y  `.../aligned_depth_to_color/camera_info` | Información de profundidad alineada con el color para la proyección 3D. |
+| `/ur/tcp_pose` | Pose TCP grabada, utilizada por la etapa de transformación cámara-base. |
+| `/tf` y `/tf_static` | Transformaciones dinámicas y estáticas para situar los elementos en sus sistemas de coordenadas. |
+| `/robot_description` | Descripción URDF que puede utilizar el display RobotModel de RViz. |
+
+Este ejemplo no reproduce la nube de puntos ni `/joint_states`. Puedes añadirlos a la lista si los necesitas y están grabados. Los TF grabados ya permiten reproducir las transformaciones del robot, no hace falta lanzar simultáneamente otro publicador de esas mismas transformaciones.
+
+Los nombres de cámara deben coincidir con la configuración del módulo, por defecto `cameraD455`. Si el bag utiliza otros nombres, adapta `CAMERA_NAME` o los remapeos.
+
+Por defecto se realiza **una sola pasada** y el comando termina al finalizar la grabación. Para repetirla, añade `--loop` al comando anterior. En cada vuelta el tiempo de reproducción vuelve al comienzo: comprueba que los nodos, sus buffers y TF toleran ese salto. Si aparecen problemas justo al reiniciar, valida primero una sola pasada.
+
+>[!warning] Rendimiento en la lectura y advertencias
+>
+>En las pruebas con Windows, un bag MCAP de 6,4 GiB y unos 58 segundos provocaba este aviso al reproducirlo desde una carpeta de Windows montada directamente:
+>
+>```text
+>Message queue starved. Messages will be delayed.
+>```
+>
+>El aviso indica que el reproductor se queda sin mensajes preparados para publicar; **no demuestra por sí solo que el bag esté dañado**. Aumentar la cola y filtrar topics no bastó en esa prueba. La reproducción desde una copia en el almacenamiento Linux de Docker eliminó el aviso y mejoró la fluidez de imagen y TF. Por eso se utiliza el volumen persistente como origen de reproducción.
+>
+>Reproduce desde **`/ros_bags`**, no desde `/ros_bags_source`. Si el aviso continúa después de completar la importación, revisa la carga del equipo, la lectura/descompresión y los topics seleccionados; no aumentes indefinidamente la cola. El volumen utiliza el disco de datos configurado en Docker Desktop, que no tiene por qué estar en el mismo disco que el repositorio.
+
+> [!NOTE] No mezclar apartados 2.1 y 2.2
+> No ejecutes simultáneamente un driver de cámara o un publicador de TCP real que publique los mismos topics que el bag. Para trabajar con `--clock`, configura el tiempo simulado en los consumidores y en RViz como se indica en las secciones siguientes. Revisa también su QoS si faltan mensajes.
+
+
+
+### 2.2 Con cámara física: añadir el acceso USB
+
+Conecta la RealSense y cierra las aplicaciones que puedan estar utilizándola. **En Windows con WSL 2**, instala y configura previamente `usbipd-win` siguiendo la [guía de Microsoft](https://learn.microsoft.com/es-es/windows/wsl/connect-usb). Abre Ubuntu y déjalo en ejecución:
+
+```powershell
+wsl -d Ubuntu
+```
+
+En otra terminal de **PowerShell**, identifica la cámara y conéctala a WSL:
+
+```powershell
+usbipd list
+usbipd attach --wsl --busid <BUSID>
+```
+
+Sustituye `<BUSID>` por el identificador actual de la RealSense. Si figura como `Not shared`, un administrador debe ejecutar primero `usbipd bind --busid <BUSID>`. Si ya figura como `Attached`, no repitas el attach.
+
+Cuando el motor Linux de Docker tenga acceso al USB, arranca el módulo combinando los dos Compose:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose-usb.yml up -d --no-deps --no-build operator_tracking
+docker compose -f docker-compose.yml -f docker-compose-usb.yml exec operator_tracking bash
+```
+
+Dentro del contenedor, comprueba la visibilidad de la cámara y la existencia de su dispositivo:
+
+```bash
+lsusb
+ls -l /dev/bus/usb/*/
+```
+
+Después lanza el driver. Este perfil utiliza color y profundidad a 640 × 480 y 15 FPS, con alineación y nube de puntos:
+
+```bash
+ros2 launch realsense2_camera rs_launch.py \
+  camera_namespace:=camera \
+  camera_name:=cameraD455 \
+  device_type:=d455 \
+  enable_color:=true \
+  enable_depth:=true \
+  enable_gyro:=false \
+  enable_accel:=false \
+  align_depth.enable:=true \
+  pointcloud.enable:=true \
+  pointcloud.allow_no_texture_points:=false \
+  rgb_camera.color_profile:=640x480x15 \
+  depth_module.depth_profile:=640x480x15 \
+  decimation_filter.enable:=false \
+  pointcloud.ordered_pc:=true \
+  clip_distance:=2.0 \
+  publish_tf:=true
+```
+
+Deja abierta esta terminal mientras utilizas la cámara. El nombre del driver debe coincidir con el del pipeline, por defecto `cameraD455`.
+
+> [!WARNING] Problemas en la ruta /dev/bus/usb
+> Si aparece `bind source path does not exist: /dev/bus/usb`, el fallo se produce **al crear el contenedor**, no al construir la imagen. Comprueba el acceso USB desde el motor Linux de Docker. Que Windows o Ubuntu detecten la cámara no confirma por sí solo el acceso desde Docker.
+>
+> No crees una carpeta vacía para ocultar el error. Para trabajar con un rosbag, utiliza únicamente el Compose principal.
+
+## 3. Configurar y activar el pipeline en ambos modos
+
+Con el bag reproduciéndose o la cámara publicando, abre **otra terminal del contenedor** desde el host:
+
+```bash
+docker exec -it operator_tracking bash
+```
+
+>[!note] En caso de estar utilizando los ros bags
+**En modo rosbag con `--clock`**, establece primero el tiempo simulado en los cinco nodos, antes de configurarlos y activarlos:
+>
+>```bash
+>ros2 param set /hand_mediapipe_node use_sim_time true
+>ros2 param set /hand_landmarks_3d_node use_sim_time true
+>ros2 param set /hand_palm_plane_node use_sim_time true
+>ros2 param set /hand_cam_to_base_node use_sim_time true
+>ros2 param set /orchestrator use_sim_time true
+>```
+
+**En modo cámara física**, utiliza `use_sim_time=false` (valor predeterminado); si cambias de modo sin recrear los nodos, restablece ese parámetro a `false` en los cinco nodos. No actives el tiempo simulado sin una fuente de `/clock`.
+
+Con los nodos en estado `unconfigured`, configúralos y, si la acción devuelve `success: true`, actívalos. Si ya están en `inactive`, ejecuta solo la activación; si ya están activos, no repitas las transiciones:
+
+
+```bash
+ros2 action send_goal /lifecycle_control hand_hri_mediapipe_msgs/action/LifecycleControl "{target_state: configure}" --feedback
+ros2 action send_goal /lifecycle_control hand_hri_mediapipe_msgs/action/LifecycleControl "{target_state: activate}" --feedback
+ros2 lifecycle get /hand_mediapipe_node
+```
+
+Tras configurar, el estado esperado es `inactive [2]`; tras activar, `active [3]`. Para comprobar el procesamiento:
+
+```bash
+ros2 topic echo /stats/hand_pipeline --once
+```
+
+No es necesario lanzar otra vez los nodos individuales de la sección **Nodos de ROS2**: el Compose ya los arranca mediante el launch lifecycle.
+
+## 4. Cambiar de modo y comprobar el estado
+
+Para pasar de cámara a rosbag, detén primero el driver RealSense y ejecuta el comando de arranque **sin cámara**. Para pasar a cámara, detén la reproducción del bag, prepara el USB y ejecuta el comando **con cámara**.
+
+Cambiar los montajes puede recrear `operator_tracking`: los procesos iniciados con `docker exec` terminan y hay que volver a lanzar la fuente de datos y repetir la configuración y activación lifecycle. **No requiere reconstruir la imagen.**
+
+Consulta el estado y los logs con:
+
+```bash
+docker compose -f docker-compose.yml ps operator_tracking
+docker compose -f docker-compose.yml logs --tail=80 operator_tracking
+```
+
+## 5. Red, RViz y servicios FIWARE
+
+Se utiliza **Fast DDS** (`rmw_fastrtps_cpp`). Mantén el mismo `ROS_DOMAIN_ID` en los procesos que deban comunicarse y revisa `FASTDDS_BUILTIN_TRANSPORTS` en el Compose: `SHM` utiliza únicamente memoria compartida local; `DEFAULT` habilita los transportes predeterminados, incluido UDP, para comunicar también con otros equipos si la red lo permite. La configuración se aplica al crear los procesos, no solo al abrir una nueva terminal.
+
+Este Compose utiliza `network_mode: host`. En Docker Desktop activa **Settings → Resources → Network → Enable host networking** y aplica los cambios; véase la [documentación de Docker](https://docs.docker.com/engine/network/drivers/host/).
+
+Para visualizar un rosbag reproducido con `--clock`, arranca RViz con `rviz2 --ros-args -p use_sim_time:=true`. En modo cámara física utiliza el tiempo del sistema (`use_sim_time=false`). En RobotModel selecciona `/robot_description` como topic de descripción. Si el modelo no aparece al abrir RViz después de que se haya publicado su mensaje único, revisa el QoS transient-local de ese topic y del consumidor.
+
+En Windows, ejecutar `rviz2` dentro del contenedor requiere configurar además el acceso gráfico a **WSLg** (variables de pantalla y montaje del socket). El archivo USB solo añade acceso al dispositivo; no habilita la interfaz gráfica. Revisa también el QoS de los displays: en las pruebas realizadas, recibir las imágenes con **Reliable** recuperó la frecuencia esperada.
+
+Los comandos anteriores arrancan solo `operator_tracking`. El Compose principal también define Orion-LD, MongoDB, TimescaleDB, Adminer y Grafana. Antes de arrancar todos los servicios debe existir el mapping `fiware/out/dds-config.json` como archivo válido; consulta [la guía FIWARE](README_parteFIWARE.md).
+
+Una vez preparado el mapping y sin otro despliegue FIWARE duplicado, puedes arrancar todos los servicios:
+
+```bash
+# Rellenar con resultado
+```
+Lanza tus nodos de ROS en Jazzy o en un contenedor Jazzy usando la red del Host.
+
+>[!NOTE] 
+> El `docker-compose.yml` que proporcionamos ya lleva incluido el nodo de ROS2 que vamos a utilizar en el Workshop, pero si alguien está interesado en una versión general que puedan usar para sus desarrollos, proporcionamos también `docker-compose-orion.yml`.
+>```bash
+>docker compose -f docker-compose-orion.yml up -d
+>```
+
+
+El compose levanta las siguientes aplicaciones:
+- Adminer: Visualizador de la tabla de datos. Puerto `8082`, `Username: orion` & `Password: orion` & `Base de datos: orion`.
+- Grafana: Dashboard que usaremos al final del workshop para visualizar los datos. Puerto `4430`, `Username: admin` & `Password: admin`
+
+## Nodos de ROS2
+
+
+
+Si queréis una explicación más detallada de los nodos podréis consultarlo [aquí](/arise-vulcanexus-enviroment/docs/Nodos.md)
+
+[Nodos de ciclo ](/arise-vulcanexus-enviroment/docs/Configurar-lifecycle.md)
+
+- Nodo cámara
+```bash
+ros2 launch realsense2_camera rs_launch.py \
+  enable_color:=true \
+  enable_depth:=true \
+  enable_gyro:=false \
+  enable_accel:=false 
+```
+
+>[!NOTE] USB2.1
+> En caso de que la cámara se conecte aun USB2.1 recomendamos lanzarlo de la siguiente manera
+>```bash
+>ros2 launch realsense2_camera rs_launch.py \
+>     camera_name:=cameraD455 \
+>     device_type:=d455 \
+>     enable_color:=true \
+>     enable_depth:=true \
+>     enable_gyro:=false \
+>     enable_accel:=false \
+>     align_depth.enable:=true \
+>     pointcloud.enable:=true \
+>     pointcloud.allow_no_texture_points:=false \
+>     rgb_camera.color_profile:=640x480x15 \
+>     depth_module.depth_profile:=640x480x15 \
+>     decimation_filter.enable:=false \
+>     pointcloud.ordered_pc:=true \
+>     clip_distance:=2.0 \
+>     publish_tf:=true
+>```
+- Mediapipe hand node
+```bash
+ros2 run hand_hri_mediapipe hand_mediapipe_node
+```
+- Hand landmarks 3d
+```
+ros2 run hand_hri_mediapipe hand_landmarks_3d_node
+```
+- Plane hand palm
+```bash
+ros2 run hand_hri_mediapipe hand_palm_plane_node
+```
+
+- Plano de camara a base Robot - Mano
+```
+ros2 run hand_hri_mediapipe hand_cam_to_base_node
+```
+- Launch 
+```bash
+ros2 launch hand_hri_mediapipe hand_pipeline.launch.py camera_name:=cameraD435f
+```
+
+
+<table>
+  <tr>
+    <td width="30%">
+      <img src="docs/assets/CARTIFactory_robot_transparent.png" width="200" alt="Logo">
+    </td>
+    <td width="70%">
+      <h3>CARTIFactory</h3>
+      <p>
+        Si estáis interesados en conocer más no olvidéis visitar la documentación de <a href="https://fundacion-cartif.github.io/CARTIFactory/es">CARTIFactory</a>!
+        <br>
+        Podéis solicitar una prueba experimental contactando con nosotros a través del siguiente <a href="mailto:marlod@cartif.es?subject=Solicitud%20Prueba%20CARTIFactory ">correo</a>.
+      </p>
+    </td>
+  </tr>
+</table>
+
+
+
+
+
+>[!tip] Proyecto ARISE
+><p align="center">
+>  <!-- ---------- ARISE logo ---------- -->
+>  <!-- Light mode -->
+>  <img src="docs/assets/ARISE_logo-light_mode.png#gh-light-mode-only" alt="ARISE logo for light mode" height="60"/>
+>  <!-- Dark mode -->
+>  <img src="docs/assets/ARISE_logo-dark_mode.png#gh-dark-mode-only" alt="ARISE logo for dark mode" height="60"/>
+></p>
+>
+> El proyecto [ARISE](https://arise-middleware.eu/) tiene como objetivo facilitar el acceso a tecnologías de interacción humano-robot (HRI) en entornos industriales, haciéndolas más accesibles y económicamente viables, especialmente en los sectores sanitario, intralogístico y manufacturero.
+> 
+>Estos módulos buscan integrar [FIWARE Orion Context Broker](https://fiware-orion.readthedocs.io/en/master/) y [eProsima Vulcanexus](https://vulcanexus.org/) para facilitar el desarrollo de aplicaciones robóticas e industriales capaces de adaptarse a su contexto. Además, incorporan [ROS4HRI](https://ros4hri.github.io/), un estándar abierto basado en ROS que proporciona un conjunto de paquetes diseñados para simplificar el desarrollo de capacidades de interacción humano-robot (HRI) en sistemas robóticos.

@@ -1,4 +1,18 @@
-# ROS2 ignoring colocn folders
-build/
-install/
-log/
+# Ignorar archivos log, install y build dentro de la carpeta arise_ws
+/arise_ws/log/
+/arise_ws/install/
+/arise_ws/build/
+/arise_ws/.vscode/
+
+#Pycaches
+./arise_ws/src/hand_hri_mediapipe/hand_hri_mediapipe/__pycache__
+
+#ROS4HRI
+/arise-vulcanexus-enviroment/arise_ws/src/hri_msgs/
+
+#FIWARE
+./fiware/
+fiware_old/
+fiware.zip
+ros_bags/*
+/arise_ws/

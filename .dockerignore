@@ -1,0 +1,15 @@
+.git
+.gitignore
+
+arise_ws/build/
+arise_ws/install/
+arise_ws/log/
+
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+.vscode/
+.idea/
+
+.env

@@ -1,0 +1,66 @@
+services:
+  discovery:
+    build:
+      context: ./fiware/discovery
+      dockerfile: Dockerfile
+
+    image: ddsenabler-discovery
+    container_name: ddsenabler-discovery
+    network_mode: host
+    environment:
+      FASTDDS_BUILTIN_TRANSPORTS: UDPv4
+
+    command:
+      - sh
+      - -lc
+      - |
+        set -e
+        . /ws/install/setup.sh
+
+        printf '%s\n' 'dds:' '  domain: 0' > /tmp/discovery-config.yml
+
+        BIN=$$(find /ws/install -type f -name ddsenabler_example_discovery | head -n 1)
+
+        if [ -z "$$BIN" ]; then
+          echo "ERROR: Discovery executable not found"
+          exit 1
+        fi
+
+        echo "Using $$BIN"
+        exec "$$BIN" /tmp/discovery-config.yml 8081
+
+    restart: unless-stopped
+
+  mapper-web:
+    build:
+      context: https://github.com/Engineering-Research-and-Development/dds-ngsild-mapper.git#main
+      dockerfile: Dockerfile
+
+    image: dds-ngsi-mapper
+    container_name: dds-ngsi-mapper-web
+
+    network_mode: host
+
+    depends_on:
+      - discovery
+
+    entrypoint:
+      - node
+      - /app/src/server.js
+
+    environment:
+      DDS_DISCOVERY_URL: ws://localhost:8081
+      DDS_DISCOVERY_TIMEOUT_MS: "30000"
+      DDS_DISCOVERY_WS_QUIET_MS: "3000"
+      DDS_DOMAIN: "0"
+      NGSI_IRI_BASE: https://my.org/dds/
+      WEB_PORT: "3001"
+
+    user: "${MAPPER_UID}:${MAPPER_GID}"
+
+    volumes:
+      - ./fiware/out:/app/out
+
+    restart: unless-stopped
+
+

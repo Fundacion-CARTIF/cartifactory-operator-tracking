@@ -1,0 +1,10 @@
+# Optional hardware access; use together with docker-compose.yml.
+# The source must exist in the Linux Docker engine, not just in Windows/WSL.
+services:
+  operator_tracking:
+    volumes:
+      - type: bind
+        source: /dev/bus/usb
+        target: /dev/bus/usb
+        bind:
+          create_host_path: false
