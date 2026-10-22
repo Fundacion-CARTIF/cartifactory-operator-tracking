@@ -36,6 +36,7 @@
   - [5. Configuración del Context Broker de FIWARE](#5-configuración-del-context-broker-de-fiware)
     - [5.1 Añadir nuevos topics](#51-añadir-nuevos-topics)
     - [5.2 Visualización de los datos](#52-visualización-de-los-datos)
+    - [5.3 Mapping Tool](#53-mapping-tool)
   - [5. Red, RViz y servicios FIWARE](#5-red-rviz-y-servicios-fiware)
 
 # Inicio
@@ -402,13 +403,36 @@ Más abajo es necesario definir el nombre de las entidades NGSI-LD. Es necesario
 
 ### 5.2 Visualización de los datos
 
-Una vez tenemos el Context Broker reiniciado
+Una vez tenemos el Context Broker reiniciado podemos acceder a las siguientes interfaces:
+- Adminer (`http://localhost:8082`), con la configuración:
+
+| Campo | Valor |
+| ----- | ----- |
+| Motor de base de datos | PostgreSQL |
+| Usuario | orion |
+| Contraseña | orion |
+| Base de datos | orion |
+
+![adminer1](./docs/assets/visualizacion/adminer_1.png)
+![adminer2](./docs/assets/visualizacion/adminer_2.png)
+- Grafana (`http://localhost:4430`), con el usuario y contraseña por defecto **admin**.
+
+![grafana]()
+
+### 5.3 Mapping Tool
+La herramienta de [mapeo entre DDS y NGSI-LD](https://github.com/Engineering-Research-and-Development/dds-ngsild-mapper) facilita el proceso de construir el `fiware\out\dds-config.json`, evitando que se tenga que hacer a mano. Se puede contruir la imagen previo a lanzar el contenedor:
+```bash
+docker compose -f docker-compose-mapping.yml build
+```
+Una vez construido se puede levantar:
+```bash
+docker compose -f docker-compose-mapping.yml up -d
+```
 
 
 
-
-
-
+>[!tip]
+> Si se quiere saber más sobre cómo se configura el Context Broker con ROS2, podéis revisar la [siguiente documentación](https://arise-framework-documentation.readthedocs.io/en/latest/rst/tutorials/tutorials.html).
 
 ## 5. Red, RViz y servicios FIWARE
 
