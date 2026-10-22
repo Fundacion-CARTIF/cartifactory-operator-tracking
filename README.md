@@ -19,6 +19,8 @@
 [![ubuntu24](https://img.shields.io/badge/Ubuntu-24.04-%23E95420?style=flat&logo=ubuntu
 )](https://releases.ubuntu.com/24.04/)
 
+![operator_gif_1](./docs/assets/GIFs/manos_operario_1.gif)
+
 # Contenidos
 - [CARTIFactory, Middleware de Interacción Humano-Robot en Industria 5.](#cartifactory-middleware-de-interacción-humano-robot-en-industria-5)
 - [Contenidos](#contenidos)
@@ -30,9 +32,11 @@
       - [Consultar y reproducir](#consultar-y-reproducir)
     - [2.2 Con cámara física: añadir el acceso USB](#22-con-cámara-física-añadir-el-acceso-usb)
   - [3. Configurar y activar el pipeline en ambos modos](#3-configurar-y-activar-el-pipeline-en-ambos-modos)
-  - [4. Cambiar de modo y comprobar el estado](#4-cambiar-de-modo-y-comprobar-el-estado)
+  - [4. Visualización mediante RViz2](#4-visualización-mediante-rviz2)
+  - [5. Configuración del Context Broker de FIWARE](#5-configuración-del-context-broker-de-fiware)
+    - [5.1 Añadir nuevos topics](#51-añadir-nuevos-topics)
+    - [5.2 Visualización de los datos](#52-visualización-de-los-datos)
   - [5. Red, RViz y servicios FIWARE](#5-red-rviz-y-servicios-fiware)
-  - [Nodos de ROS2](#nodos-de-ros2)
 
 # Inicio
 
@@ -167,7 +171,8 @@ Los nombres de cámara deben coincidir con la configuración del módulo, por de
 
 Por defecto se realiza **una sola pasada** y el comando termina al finalizar la grabación. Para repetirla, añade `--loop` al comando anterior. En cada vuelta el tiempo de reproducción vuelve al comienzo: comprueba que los nodos, sus buffers y TF toleran ese salto. Si aparecen problemas justo al reiniciar, valida primero una sola pasada.
 
->[!warning] Rendimiento en la lectura y advertencias
+>[!warning] 
+>**Rendimiento en la lectura y advertencias**
 >
 >En las pruebas con Windows, un bag MCAP de 6,4 GiB y unos 58 segundos provocaba este aviso al reproducirlo desde una carpeta de Windows montada directamente:
 >
@@ -187,8 +192,8 @@ Por defecto se realiza **una sola pasada** y el comando termina al finalizar la 
 ### 2.2 Con cámara física: añadir el acceso USB
 
 >[!Note]
->**Añadir el acceso USB**
->
+><details>
+><summary>Añadir el acceso USB a Docker desde Windows</summary>
 >Conecta la RealSense y cierra las aplicaciones que puedan estar utilizándola. **En Windows con WSL 2**, instala y configura previamente `usbipd-win` siguiendo la [guía de Microsoft](https://learn.microsoft.com/es-es/windows/wsl/connect-usb). Abre Ubuntu y déjalo en ejecución:
 >
 >```powershell
@@ -203,6 +208,7 @@ Por defecto se realiza **una sola pasada** y el comando termina al finalizar la 
 >```
 >
 >Sustituye `<BUSID>` por el identificador actual de la RealSense. Si figura como `Not shared`, un administrador debe ejecutar primero `usbipd bind --busid <BUSID>`. Si ya figura como `Attached`, no repitas el attach.
+></details>
 
 Cuando el motor Linux de Docker tenga acceso al USB, arranca el módulo combinando los dos Compose:
 
@@ -257,8 +263,10 @@ Con el bag reproduciéndose o la cámara publicando, abre **otra terminal del co
 docker exec -it operator_tracking bash
 ```
 
->[!note] En caso de estar utilizando los ros bags
-**En modo rosbag con `--clock`**, establece primero el tiempo simulado en los cinco nodos, antes de configurarlos y activarlos:
+>[!note] 
+>**En caso de estar utilizando los ros bags**
+>
+>**En modo rosbag con `--clock`**, establece primero el tiempo simulado en los cinco nodos, antes de configurarlos y activarlos:
 >
 >```bash
 >ros2 param set /hand_mediapipe_node use_sim_time true
@@ -268,27 +276,28 @@ docker exec -it operator_tracking bash
 >ros2 param set /orchestrator use_sim_time true
 >```
 
-**En modo cámara física**, utiliza `use_sim_time=false` (valor predeterminado); si cambias de modo sin recrear los nodos, restablece ese parámetro a `false` en los cinco nodos. No actives el tiempo simulado sin una fuente de `/clock`.
+**En modo cámara física**, utiliza `use_sim_time=false` (valor predeterminado). Si cambias de modo sin recrear los nodos, restablece ese parámetro a `false` en los cinco nodos. No actives el tiempo simulado sin una fuente de `/clock`.
 
-Con los nodos en estado `unconfigured`, configúralos y, si la acción devuelve `success: true`, actívalos. Si ya están en `inactive`, ejecuta solo la activación; si ya están activos, no repitas las transiciones:
-
-
+Todos los nodos comienzan en modo `unconfigured`, podéis comprobarlo ejecutando el siguiente comando:
+```bash
+ros2 lifecycle get
+```
+Debemos pasar de `unconfigured` a `inactive`, y luego a `active`. Si ya están en `inactive`, ejecuta solo la activación. Podéis usar las siguientes llamadas a acciones para hacerlo, devolverán `success: true` y podréis continuar.
 ```bash
 ros2 action send_goal /lifecycle_control hand_hri_mediapipe_msgs/action/LifecycleControl "{target_state: configure}" --feedback
 ros2 action send_goal /lifecycle_control hand_hri_mediapipe_msgs/action/LifecycleControl "{target_state: activate}" --feedback
 ros2 lifecycle get /hand_mediapipe_node
 ```
+![nodes_schema](./docs/assets/ROS2/nodes_schema.png)
 
-Tras configurar, el estado esperado es `inactive [2]`; tras activar, `active [3]`. Para comprobar el procesamiento:
+Tras configurar, el estado esperado es `inactive [2]`, tras activar, `active [3]`. Para comprobar el procesamiento:
 
 ```bash
 ros2 topic echo /stats/hand_pipeline --once
 ```
 
-No es necesario lanzar otra vez los nodos individuales de la sección **Nodos de ROS2**: el Compose ya los arranca mediante el launch lifecycle.
-
-## 4. Cambiar de modo y comprobar el estado
-
+<details>
+<summary>Cambiar entre uso de cámara y rosbag</summary>
 Para pasar de cámara a rosbag, detén primero el driver RealSense y ejecuta el comando de arranque **sin cámara**. Para pasar a cámara, detén la reproducción del bag, prepara el USB y ejecuta el comando **con cámara**.
 
 Cambiar los montajes puede recrear `operator_tracking`: los procesos iniciados con `docker exec` terminan y hay que volver a lanzar la fuente de datos y repetir la configuración y activación lifecycle. **No requiere reconstruir la imagen.**
@@ -299,6 +308,107 @@ Consulta el estado y los logs con:
 docker compose -f docker-compose.yml ps operator_tracking
 docker compose -f docker-compose.yml logs --tail=80 operator_tracking
 ```
+</details>
+
+## 4. Visualización mediante RViz2
+
+Podemos ver el seguimiento de las manos del operario a través de RViz2, pero la forma de arrancarlo dependerá de si estamos usando un equipo con Windos o Linux:
+<details>
+<summary>Windows</summary>
+Para arrancar RViz2 desde Windows, primero entrad al wsl
+```bash
+ wsl -d Ubuntu
+```
+
+Tras esto, podemos arrancar un contenedor con RVIZ
+```bash
+docker.exe run --rm -it   --name operator_tracking_rviz   --network host   --ipc host   -e DISPLAY=:0   -e ROS_DOMAIN_ID=0   -e RMW_IMPLEMENTATION=rmw_fastrtps_cpp   -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4   -e QT_X11_NO_MITSHM=1   -e LIBGL_ALWAYS_SOFTWARE=1   --mount 'type=bind,source=\\wsl.localhost\Ubuntu\mnt\wslg\.X11-unix,target=/tmp/.X11-unix,readonly'   cartifactory/operator-tracking:latest   rviz2 --ros-args -p use_sim_time:=true
+```
+</details>
+
+<details>
+<summary>Linux</summary>
+Para arrancar RViz2 desde Linux, podemos arrancar un contenedor con RVIZ
+```bash
+docker.exe run --rm -it   --name operator_tracking_rviz   --network host   --ipc host   -e DISPLAY=:0   -e ROS_DOMAIN_ID=0   -e RMW_IMPLEMENTATION=rmw_fastrtps_cpp   -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4   -e QT_X11_NO_MITSHM=1   -e LIBGL_ALWAYS_SOFTWARE=1   --mount 'type=bind,source=\\wsl.localhost\Ubuntu\mnt\wslg\.X11-unix,target=/tmp/.X11-unix,readonly'   cartifactory/operator-tracking:latest   rviz2 --ros-args -p use_sim_time:=true
+```
+</details>
+
+## 5. Configuración del Context Broker de FIWARE
+
+### 5.1 Añadir nuevos topics
+
+El Context Broker, por defecto, lee todos los topics dentro de su misma red, pero eso no quiere decir que cree entidades NGSI-LD. Es necesario indicarle qué topics necesitamos indicar, editando el fichero `./fiware\out\dds-config.json`. Es necesario modificar los campos `allowlist` y `topics`, añadiendo los topics que se quieran dentro.
+
+Hemos preparado un nodo de pruebas que publica tres topics sencillos para que aprendáis como se añaden nuevos mensajes y se crean nuevas entidades:
+
+| Topic | Descripción |
+| --- | --- |
+| `demo/booleano` | Ejemplo de mensaje booleano, alternando entre *True* y *False*  |
+| `demo/color` | Ejemplo de mensaje tipo string, publica una lista de colores en bucle. |
+| `demo/entero` | Ejemplo de mensaje tipo entero, realiza un bucle entre los números 0-9. |
+
+Por otro lado hemos dejado preparado otro mensaje propio `/stats/hand_pipeline`, para poder mostraros un ejemplo más completo y que veáis que no solo funciona con mensajes estándar de ROS2.
+
+<details>
+<summary>Modificación de allowlist</summary>
+
+Dentro del campo de `topics` es necesario listar todos los topics a los que queremos que el Context Broker se suscriba. Es importante que al inicio del topic se ponga **`rt/`**.
+```bash
+"allowlist": [
+  {"name": "rt/stats/hand_pipeline"},
+  {"name": "rt/demo/booleano"},
+  {"name": "rt/demo/color"},
+  {"name": "rt/demo/entero"}
+],
+```
+</details>
+
+<details>
+<summary>Definición de topics como entidades NGSI-LD</summary>
+
+Más abajo es necesario definir el nombre de las entidades NGSI-LD. Es necesario definir un `entityType` y `attribute`, y utilizar ambos apra construir el `entityId` soguiendo el formato `urn:ngsi-ld:<entityType>:<attribute>`
+```bash
+"topics": {
+  "rt/stats/hand_pipeline": {
+    "entityId": "urn:ngsi-ld:StatsHandPipeline:stats_hand_pipeline",
+    "entityType": "StatsHandPipeline",
+    "attribute": "stats_hand_pipeline"
+  },
+  "rt/demo/color": {
+    "entityId": "urn:ngsi-ld:DemoColor:demo_color",
+    "entityType": "DemoColor",
+    "attribute": "demo_color"
+  },
+  "rt/demo/entero": {
+    "entityId": "urn:ngsi-ld:DemoEntero:demo_entero",
+    "entityType": "DemoEntero",
+    "attribute": "demo_entero"
+  },
+  "rt/demo/booleano": {
+    "entityId": "urn:ngsi-ld:DemoBooleano:demo_booleano",
+    "entityType": "DemoBooleano",
+    "attribute": "demo_booleano"
+  }
+},
+```
+</details>
+
+>[!important]
+> El Orion Context Broker lee esta configuración cada vez que arranca, por lo que si se ha modificado mientras el contenedor esté levantado, es necesario reiniciar el contenedor.
+>```bash
+>docker compose up -d --no-deps --force-recreate mongodb timescale-db orion adminer grafana
+>```
+
+### 5.2 Visualización de los datos
+
+Una vez tenemos el Context Broker reiniciado
+
+
+
+
+
+
 
 ## 5. Red, RViz y servicios FIWARE
 
@@ -330,64 +440,10 @@ El compose levanta las siguientes aplicaciones:
 - Adminer: Visualizador de la tabla de datos. Puerto `8082`, `Username: orion` & `Password: orion` & `Base de datos: orion`.
 - Grafana: Dashboard que usaremos al final del workshop para visualizar los datos. Puerto `4430`, `Username: admin` & `Password: admin`
 
-## Nodos de ROS2
 
 
 
-Si queréis una explicación más detallada de los nodos podréis consultarlo [aquí](/arise-vulcanexus-enviroment/docs/Nodos.md)
 
-[Nodos de ciclo ](/arise-vulcanexus-enviroment/docs/Configurar-lifecycle.md)
-
-- Nodo cámara
-```bash
-ros2 launch realsense2_camera rs_launch.py \
-  enable_color:=true \
-  enable_depth:=true \
-  enable_gyro:=false \
-  enable_accel:=false 
-```
-
->[!NOTE] USB2.1
-> En caso de que la cámara se conecte aun USB2.1 recomendamos lanzarlo de la siguiente manera
->```bash
->ros2 launch realsense2_camera rs_launch.py \
->     camera_name:=cameraD455 \
->     device_type:=d455 \
->     enable_color:=true \
->     enable_depth:=true \
->     enable_gyro:=false \
->     enable_accel:=false \
->     align_depth.enable:=true \
->     pointcloud.enable:=true \
->     pointcloud.allow_no_texture_points:=false \
->     rgb_camera.color_profile:=640x480x15 \
->     depth_module.depth_profile:=640x480x15 \
->     decimation_filter.enable:=false \
->     pointcloud.ordered_pc:=true \
->     clip_distance:=2.0 \
->     publish_tf:=true
->```
-- Mediapipe hand node
-```bash
-ros2 run hand_hri_mediapipe hand_mediapipe_node
-```
-- Hand landmarks 3d
-```
-ros2 run hand_hri_mediapipe hand_landmarks_3d_node
-```
-- Plane hand palm
-```bash
-ros2 run hand_hri_mediapipe hand_palm_plane_node
-```
-
-- Plano de camara a base Robot - Mano
-```
-ros2 run hand_hri_mediapipe hand_cam_to_base_node
-```
-- Launch 
-```bash
-ros2 launch hand_hri_mediapipe hand_pipeline.launch.py camera_name:=cameraD435f
-```
 
 
 <table>

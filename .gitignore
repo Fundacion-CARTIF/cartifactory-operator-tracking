@@ -8,7 +8,7 @@
 ./cartifactory_ws/src/hand_hri_mediapipe/hand_hri_mediapipe/__pycache__
 
 #ROS4HRI
-/arise-vulcanexus-enviroment/cartifactory_ws/src/hri_msgs/
+./cartifactory_ws/src/hri_msgs/
 
 #FIWARE
 ./fiware/
