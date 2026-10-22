@@ -61,9 +61,9 @@ RUN pip3 install \
 # ROS workspace
 # ---------------------------------------------------------------------------
 
-WORKDIR /arise_ws
+WORKDIR /cartifactory_ws
 
-COPY arise_ws/src /arise_ws/src
+COPY cartifactory_ws/src /cartifactory_ws/src
 
 # Install dependencies declared by package.xml
 RUN apt-get update && \
@@ -101,7 +101,7 @@ RUN sed -i 's/\r$//' /entrypoint.sh && \
     chmod +x /entrypoint.sh && \
     printf '%s\n' \
         'source /opt/vulcanexus/jazzy/setup.bash' \
-        'if [ -f /arise_ws/install/setup.bash ]; then source /arise_ws/install/setup.bash; fi' \
+        'if [ -f /cartifactory_ws/install/setup.bash ]; then source /cartifactory_ws/install/setup.bash; fi' \
         'export LD_LIBRARY_PATH="/opt/realsense-rsusb/lib:${LD_LIBRARY_PATH:-}"' \
         >> /root/.bashrc
 

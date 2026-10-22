@@ -1,9 +1,9 @@
 .git
 .gitignore
 
-arise_ws/build/
-arise_ws/install/
-arise_ws/log/
+cartifactory_ws/build/
+cartifactory_ws/install/
+cartifactory_ws/log/
 
 **/__pycache__/
 **/*.pyc

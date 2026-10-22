@@ -82,7 +82,7 @@ El volumen se crea si todavía no existe y se reutiliza en los siguientes arranq
 Arranca solo el módulo, reutilizando la imagen construida:
 
 ```bash
-docker compose -f docker-compose.yml up -d --no-deps --no-build operator_tracking
+docker compose -f docker-compose.yml up -d
 ```
 >[!warning] Recuerda
 No añadas `docker-compose-usb.yml` ni ejecutes `usbipd attach` para este modo.
@@ -186,20 +186,23 @@ Por defecto se realiza **una sola pasada** y el comando termina al finalizar la 
 
 ### 2.2 Con cámara física: añadir el acceso USB
 
-Conecta la RealSense y cierra las aplicaciones que puedan estar utilizándola. **En Windows con WSL 2**, instala y configura previamente `usbipd-win` siguiendo la [guía de Microsoft](https://learn.microsoft.com/es-es/windows/wsl/connect-usb). Abre Ubuntu y déjalo en ejecución:
-
-```powershell
-wsl -d Ubuntu
-```
-
-En otra terminal de **PowerShell**, identifica la cámara y conéctala a WSL:
-
-```powershell
-usbipd list
-usbipd attach --wsl --busid <BUSID>
-```
-
-Sustituye `<BUSID>` por el identificador actual de la RealSense. Si figura como `Not shared`, un administrador debe ejecutar primero `usbipd bind --busid <BUSID>`. Si ya figura como `Attached`, no repitas el attach.
+>[!Note]
+>**Añadir el acceso USB**
+>
+>Conecta la RealSense y cierra las aplicaciones que puedan estar utilizándola. **En Windows con WSL 2**, instala y configura previamente `usbipd-win` siguiendo la [guía de Microsoft](https://learn.microsoft.com/es-es/windows/wsl/connect-usb). Abre Ubuntu y déjalo en ejecución:
+>
+>```powershell
+>wsl -d Ubuntu
+>```
+>
+>En otra terminal de **PowerShell**, identifica la cámara y conéctala a WSL:>
+>
+>```powershell
+>usbipd list
+>usbipd attach --wsl --busid <BUSID>
+>```
+>
+>Sustituye `<BUSID>` por el identificador actual de la RealSense. Si figura como `Not shared`, un administrador debe ejecutar primero `usbipd bind --busid <BUSID>`. Si ya figura como `Attached`, no repitas el attach.
 
 Cuando el motor Linux de Docker tenga acceso al USB, arranca el módulo combinando los dos Compose:
 
@@ -239,7 +242,9 @@ ros2 launch realsense2_camera rs_launch.py \
 
 Deja abierta esta terminal mientras utilizas la cámara. El nombre del driver debe coincidir con el del pipeline, por defecto `cameraD455`.
 
-> [!WARNING] Problemas en la ruta /dev/bus/usb
+> [!WARNING] 
+> **Problemas en la ruta /dev/bus/usb**
+>
 > Si aparece `bind source path does not exist: /dev/bus/usb`, el fallo se produce **al crear el contenedor**, no al construir la imagen. Comprueba el acceso USB desde el motor Linux de Docker. Que Windows o Ubuntu detecten la cámara no confirma por sí solo el acceso desde Docker.
 >
 > No crees una carpeta vacía para ocultar el error. Para trabajar con un rosbag, utiliza únicamente el Compose principal.

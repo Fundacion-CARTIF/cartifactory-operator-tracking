@@ -3,8 +3,8 @@ set -e
 
 source /opt/vulcanexus/jazzy/setup.bash
 
-if [ -f /arise_ws/install/setup.bash ]; then
-    source /arise_ws/install/setup.bash
+if [ -f /cartifactory_ws/install/setup.bash ]; then
+    source /cartifactory_ws/install/setup.bash
 fi
 
 # Copiar automáticamente los archivos nuevos al volumen Linux.
