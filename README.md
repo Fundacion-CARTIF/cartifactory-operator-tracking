@@ -86,6 +86,17 @@ El volumen se crea si todavía no existe y se reutiliza en los siguientes arranq
 
 Arranca solo el módulo, reutilizando la imagen construida:
 
+- En Linux:
+```bash
+export MAPPER_UID="$(id -u)"
+export MAPPER_GID="$(id -g)"
+```
+- En Windows:
+```bash
+$env:MAPPER_UID = "1000"
+$env:MAPPER_GID = "1000"
+```
+Y después arrancamos el compose:
 ```bash
 docker compose -f docker-compose.yml up -d
 ```
@@ -214,7 +225,7 @@ Por defecto se realiza **una sola pasada** y el comando termina al finalizar la 
 Cuando el motor Linux de Docker tenga acceso al USB, arranca el módulo combinando los dos Compose:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose-usb.yml up -d --no-deps --no-build operator_tracking
+docker compose -f docker-compose.yml -f docker-compose-usb.yml up -d
 docker compose -f docker-compose.yml -f docker-compose-usb.yml exec operator_tracking bash
 ```
 
@@ -417,7 +428,7 @@ Una vez tenemos el Context Broker reiniciado podemos acceder a las siguientes in
 ![adminer2](./docs/assets/visualizacion/adminer_2.png)
 - Grafana (`http://localhost:4430`), con el usuario y contraseña por defecto **admin**.
 
-![grafana]()
+![grafana](./docs/assets/visualizacion/grafana.png)
 
 ### 5.3 Mapping Tool
 La herramienta de [mapeo entre DDS y NGSI-LD](https://github.com/Engineering-Research-and-Development/dds-ngsild-mapper) facilita el proceso de construir el `fiware\out\dds-config.json`, evitando que se tenga que hacer a mano. Se puede contruir la imagen previo a lanzar el contenedor:

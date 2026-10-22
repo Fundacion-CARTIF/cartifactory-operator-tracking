@@ -415,45 +415,6 @@
             "name": "hand_mediapipe_node/get_transition_graph"
           },
           {
-            "name": "_ros2cli_508/get_type_description"
-          },
-          {
-            "name": "_ros2cli_658/get_type_description"
-          },
-          {
-            "name": "_ros2cli_504/get_type_description"
-          },
-          {
-            "name": "_ros2cli_582/get_type_description"
-          },
-          {
-            "name": "_ros2cli_579/get_type_description"
-          },
-          {
-            "name": "_ros2cli_481/get_type_description"
-          },
-          {
-            "name": "_ros2cli_507/get_type_description"
-          },
-          {
-            "name": "_ros2cli_25/get_type_description"
-          },
-          {
-            "name": "_ros2cli_546/get_type_description"
-          },
-          {
-            "name": "rosbag2_player/get_parameters"
-          },
-          {
-            "name": "rosbag2_player/get_parameter_types"
-          },
-          {
-            "name": "rosbag2_player/set_parameters"
-          },
-          {
-            "name": "rosbag2_player/set_parameters_atomically"
-          },
-          {
             "name": "rosbag2_player/describe_parameters"
           },
           {

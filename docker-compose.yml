@@ -29,6 +29,9 @@ services:
       - ros_bags_data:/ros_bags
       - ./ros_bags:/ros_bags_source:ro
 
+
+    user: "${MAPPER_UID}:${MAPPER_GID}"
+
     command:
       - ros2
       - launch
@@ -138,12 +141,7 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./fiware/grafana_datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
-
-
-
-
       - ./fiware/grafana_datasources/dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml:ro
-
       - ./fiware/grafana_datasources/grafana_hand_pipeline_stats_demo_ros2.json:/etc/grafana/dashboards/grafana_hand_pipeline_stats_demo_ros2.json:ro
     restart: unless-stopped
 

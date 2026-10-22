@@ -1,0 +1,10 @@
+/tf_static:
+  history: keep_all
+  reliability: reliable
+  durability: transient_local
+
+/robot_description:
+  history: keep_last
+  depth: 1
+  reliability: reliable
+  durability: transient_local
