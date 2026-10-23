@@ -37,7 +37,6 @@
     - [5.1 Añadir nuevos topics](#51-añadir-nuevos-topics)
     - [5.2 Visualización de los datos](#52-visualización-de-los-datos)
     - [5.3 Mapping Tool](#53-mapping-tool)
-  - [5. Red, RViz y servicios FIWARE](#5-red-rviz-y-servicios-fiware)
 
 # Inicio
 
@@ -445,41 +444,7 @@ docker compose -f docker-compose-mapping.yml up -d
 >[!tip]
 > Si se quiere saber más sobre cómo se configura el Context Broker con ROS2, podéis revisar la [siguiente documentación](https://arise-framework-documentation.readthedocs.io/en/latest/rst/tutorials/tutorials.html).
 
-## 5. Red, RViz y servicios FIWARE
-
-Se utiliza **Fast DDS** (`rmw_fastrtps_cpp`). Mantén el mismo `ROS_DOMAIN_ID` en los procesos que deban comunicarse y revisa `FASTDDS_BUILTIN_TRANSPORTS` en el Compose: `SHM` utiliza únicamente memoria compartida local; `DEFAULT` habilita los transportes predeterminados, incluido UDP, para comunicar también con otros equipos si la red lo permite. La configuración se aplica al crear los procesos, no solo al abrir una nueva terminal.
-
-Este Compose utiliza `network_mode: host`. En Docker Desktop activa **Settings → Resources → Network → Enable host networking** y aplica los cambios; véase la [documentación de Docker](https://docs.docker.com/engine/network/drivers/host/).
-
-Para visualizar un rosbag reproducido con `--clock`, arranca RViz con `rviz2 --ros-args -p use_sim_time:=true`. En modo cámara física utiliza el tiempo del sistema (`use_sim_time=false`). En RobotModel selecciona `/robot_description` como topic de descripción. Si el modelo no aparece al abrir RViz después de que se haya publicado su mensaje único, revisa el QoS transient-local de ese topic y del consumidor.
-
-En Windows, ejecutar `rviz2` dentro del contenedor requiere configurar además el acceso gráfico a **WSLg** (variables de pantalla y montaje del socket). El archivo USB solo añade acceso al dispositivo; no habilita la interfaz gráfica. Revisa también el QoS de los displays: en las pruebas realizadas, recibir las imágenes con **Reliable** recuperó la frecuencia esperada.
-
-Los comandos anteriores arrancan solo `operator_tracking`. El Compose principal también define Orion-LD, MongoDB, TimescaleDB, Adminer y Grafana. Antes de arrancar todos los servicios debe existir el mapping `fiware/out/dds-config.json` como archivo válido; consulta [la guía FIWARE](README_parteFIWARE.md).
-
-Una vez preparado el mapping y sin otro despliegue FIWARE duplicado, puedes arrancar todos los servicios:
-
-```bash
-# Rellenar con resultado
-```
-Lanza tus nodos de ROS en Jazzy o en un contenedor Jazzy usando la red del Host.
-
->[!NOTE] 
-> El `docker-compose.yml` que proporcionamos ya lleva incluido el nodo de ROS2 que vamos a utilizar en el Workshop, pero si alguien está interesado en una versión general que puedan usar para sus desarrollos, proporcionamos también `docker-compose-orion.yml`.
->```bash
->docker compose -f docker-compose-orion.yml up -d
->```
-
-
-El compose levanta las siguientes aplicaciones:
-- Adminer: Visualizador de la tabla de datos. Puerto `8082`, `Username: orion` & `Password: orion` & `Base de datos: orion`.
-- Grafana: Dashboard que usaremos al final del workshop para visualizar los datos. Puerto `4430`, `Username: admin` & `Password: admin`
-
-
-
-
-
-
+---
 
 <table>
   <tr>
@@ -501,7 +466,10 @@ El compose levanta las siguientes aplicaciones:
 
 
 
->[!tip] Proyecto ARISE
+>[!tip] 
+>
+>**Proyecto ARISE**
+>
 ><p align="center">
 >  <!-- ---------- ARISE logo ---------- -->
 >  <!-- Light mode -->
