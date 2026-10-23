@@ -72,7 +72,7 @@
       "type": "stat",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 0,
@@ -84,7 +84,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -151,7 +151,7 @@
       "type": "stat",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 6,
@@ -163,7 +163,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -230,7 +230,7 @@
       "type": "stat",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 12,
@@ -242,7 +242,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -280,7 +280,7 @@
       "type": "stat",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 18,
@@ -292,7 +292,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -330,7 +330,7 @@
       "type": "timeseries",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 0,
@@ -342,7 +342,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -375,7 +375,7 @@
       "type": "timeseries",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 12,
@@ -387,7 +387,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -421,7 +421,7 @@
       "type": "timeseries",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 0,
@@ -433,7 +433,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -467,7 +467,7 @@
       "type": "timeseries",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 12,
@@ -479,7 +479,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -514,7 +514,7 @@
       "type": "table",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 0,
@@ -526,7 +526,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "table",
@@ -550,7 +550,7 @@
       "type": "table",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 0,
@@ -562,7 +562,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "table",
@@ -586,7 +586,7 @@
       "type": "table",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "gridPos": {
         "x": 0,
@@ -598,7 +598,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "table",
@@ -639,7 +639,7 @@
       "type": "stat",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "description": "Valor actual Int32 (0 a 9). Publicación prevista cada 2 s.",
       "gridPos": {
@@ -652,7 +652,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "table",
@@ -692,7 +692,7 @@
       "type": "stat",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "description": "Muestra el literal true o false, sin convertirlo a 1/0.",
       "gridPos": {
@@ -705,7 +705,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "table",
@@ -759,7 +759,7 @@
       "type": "stat",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "description": "Último color publicado en std_msgs/msg/String.",
       "gridPos": {
@@ -772,7 +772,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "table",
@@ -841,7 +841,7 @@
       "type": "timeseries",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "description": "Secuencia circular de /demo/entero a lo largo del tiempo.",
       "gridPos": {
@@ -854,7 +854,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -899,7 +899,7 @@
       "type": "timeseries",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "description": "La gráfica representa false=0 y true=1 para permitir una serie temporal; las etiquetas muestran true/false.",
       "gridPos": {
@@ -912,7 +912,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "time_series",
@@ -974,7 +974,7 @@
       "type": "table",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "description": "Listado cronológico descendente de los colores publicados.",
       "gridPos": {
@@ -987,7 +987,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "table",
@@ -1045,7 +1045,7 @@
       "type": "table",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_ORION}"
+        "uid": "PA925617886E8799C"
       },
       "description": "Historial unificado de mensajes Integer, Bool y String.",
       "gridPos": {
@@ -1058,7 +1058,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_ORION}"
+            "uid": "PA925617886E8799C"
           },
           "editorMode": "code",
           "format": "table",

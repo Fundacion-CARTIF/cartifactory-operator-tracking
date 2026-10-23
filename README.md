@@ -424,10 +424,129 @@ Una vez tenemos el Context Broker reiniciado podemos acceder a las siguientes in
 | Base de datos | orion |
 
 ![adminer1](./docs/assets/visualizacion/adminer_1.png)
-![adminer2](./docs/assets/visualizacion/adminer_2.png)
 - Grafana (`http://localhost:4430`), con el usuario y contraseña por defecto **admin**.
 
 ![grafana](./docs/assets/visualizacion/grafana.png)
+
+Para los tres topics que estamos usando de muestra, os proporcionamos las queries que son necesarias para mostrar los datos en Grafana:
+
+
+<details>
+<summary>Queries para <code>/demo/booleano</code></summary>
+
+- Para obtener el último dato:
+  
+```bash
+SELECT
+  CASE compound::jsonb ->> 'data'
+    WHEN 'true' THEN 1
+    WHEN 'false' THEN 0
+    ELSE NULL
+  END AS "Booleano"
+FROM public.attributes
+WHERE entityid = 'urn:ngsi-ld:DemoBooleano:demo_booleano'
+  AND $__timeFilter(ts)
+  AND compound IS NOT NULL
+  AND compound::jsonb ? 'data'
+ORDER BY ts DESC
+LIMIT 1;
+```
+
+- Para obtener el histórico:
+```bash
+SELECT ts AS "time",
+  CASE compound::jsonb ->> 'data'
+    WHEN 'true' THEN 1
+    WHEN 'false' THEN 0
+    ELSE NULL
+  END AS "Booleano"
+FROM public.attributes
+WHERE entityid = 'urn:ngsi-ld:DemoBooleano:demo_booleano'
+  AND $__timeFilter(ts)
+  AND compound IS NOT NULL
+  AND compound::jsonb ? 'data'
+ORDER BY ts ASC;
+```
+</details>
+
+<details>
+<summary>Queries para <code>/demo/entero</code></summary>
+
+- Para obtener el último dato:
+  
+```bash
+SELECT (compound::jsonb ->> 'data')::integer AS "Entero"
+FROM public.attributes
+WHERE entityid = 'urn:ngsi-ld:DemoEntero:demo_entero'
+  AND $__timeFilter(ts)
+  AND compound IS NOT NULL
+  AND compound::jsonb ? 'data'
+ORDER BY ts DESC
+LIMIT 1;
+```
+
+- Para el histórico:
+
+```bash
+SELECT ts AS "time",
+  (compound::jsonb ->> 'data')::integer AS "Entero (0–9)"
+FROM public.attributes
+WHERE entityid = 'urn:ngsi-ld:DemoEntero:demo_entero'
+  AND $__timeFilter(ts)
+  AND compound IS NOT NULL
+  AND compound::jsonb ? 'data'
+ORDER BY ts ASC;
+```
+
+</details>
+
+<details>
+<summary>Queries para <code>/demo/color</code></summary>
+
+- Para obtener el último dato:
+  
+```bash
+SELECT
+  CASE compound::jsonb ->> 'data'
+    WHEN 'rojo' THEN 1
+    WHEN 'verde' THEN 2
+    WHEN 'azul' THEN 3
+    WHEN 'amarillo' THEN 4
+    WHEN 'naranja' THEN 5
+    ELSE NULL
+  END AS "Color"
+FROM public.attributes
+WHERE entityid = 'urn:ngsi-ld:DemoColor:demo_color'
+  AND $__timeFilter(ts)
+  AND compound IS NOT NULL
+  AND compound::jsonb ? 'data'
+ORDER BY ts DESC
+LIMIT 1;
+```
+
+- Para el histórico:
+
+```bash
+SELECT ts AS "time",
+  compound::jsonb ->> 'data' AS "Color"
+FROM public.attributes
+WHERE entityid = 'urn:ngsi-ld:DemoColor:demo_color'
+  AND $__timeFilter(ts)
+  AND compound IS NOT NULL
+  AND compound::jsonb ? 'data'
+ORDER BY ts DESC
+LIMIT 60;
+```
+
+</details>
+
+
+
+
+
+
+
+
 
 ### 5.3 Mapping Tool
 La herramienta de [mapeo entre DDS y NGSI-LD](https://github.com/Engineering-Research-and-Development/dds-ngsild-mapper) facilita el proceso de construir el `fiware\out\dds-config.json`, evitando que se tenga que hacer a mano. Se puede contruir la imagen previo a lanzar el contenedor:
