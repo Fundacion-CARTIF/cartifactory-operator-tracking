@@ -451,8 +451,6 @@ Ajusta el QoS del display al del publicador. En las pruebas anteriores de este e
 
 Al cerrar RViz, `--rm` elimina únicamente el contenedor `operator_tracking_rviz`; el módulo sigue ejecutándose. Este contenedor de visualización no necesita acceso USB ni montar los bags: recibe los datos mediante ROS 2.
 
-Referencias: [WSLg y aplicaciones gráficas](https://learn.microsoft.com/es-es/windows/wsl/tutorials/gui-apps), [red del host de Docker](https://docs.docker.com/engine/network/drivers/host/), [transportes de Fast DDS](https://fast-dds.docs.eprosima.com/en/latest/fastdds/env_vars/env_vars.html) y [autorización X11 con xhost](https://xorg.freedesktop.org/archive/X11R7.7/doc/man/man1/xhost.1.xhtml).
-
 ## 5. Configuración del Context Broker de FIWARE
 
 ### 5.1 Añadir nuevos topics
