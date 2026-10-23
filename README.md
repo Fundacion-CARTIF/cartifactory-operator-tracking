@@ -323,27 +323,133 @@ docker compose -f docker-compose.yml logs --tail=80 operator_tracking
 
 ## 4. Visualización mediante RViz2
 
-Podemos ver el seguimiento de las manos del operario a través de RViz2, pero la forma de arrancarlo dependerá de si estamos usando un equipo con Windos o Linux:
+RViz2 se puede ejecutar en un **contenedor separado**, utilizando la misma imagen que el módulo. Mantén `operator_tracking` en ejecución y la cámara o el rosbag publicando. No es necesario instalar ROS 2 ni RViz en el sistema anfitrión.
+
+Los ejemplos utilizan `ROS_DOMAIN_ID=0` y Fast DDS (`rmw_fastrtps_cpp`). El dominio debe coincidir con el del módulo y el reproductor del bag.
+
+> [!IMPORTANT]
+> **Transporte DDS y tiempo de ROS**
+>
+> Los comandos siguientes utilizan `FASTDDS_BUILTIN_TRANSPORTS=UDPv4`. Comprueba el transporte del módulo desde el host:
+>
+> ```bash
+> docker inspect operator_tracking --format '{{range .Config.Env}}{{println .}}{{end}}'
+> ```
+>
+> Si el módulo utiliza `UDPv4` o `DEFAULT`, estos ejemplos permiten comunicar mediante UDP, siempre que la red y los perfiles DDS lo permitan. Si utiliza **solo `SHM`**, cambia también la opción de RViz a `-e FASTDDS_BUILTIN_TRANSPORTS=SHM`. Para ese modo local ambos contenedores deben compartir la red y el espacio IPC; estos ejemplos y el Compose deben utilizar `network_mode: host` / `--network host` e `ipc: host` / `--ipc host`. Un participante configurado solo con SHM y otro solo con UDP no comparten transporte.
+>
+> Con un **rosbag que publica `/clock`**, utiliza `use_sim_time:=true`. Con una **cámara física**, cambia la última opción a `use_sim_time:=false`. RViz con tiempo simulado necesita que el reproductor esté publicando `/clock`.
+
 <details>
-<summary>Windows</summary>
-Para arrancar RViz2 desde Windows, primero entrad al wsl
-```bash
- wsl -d Ubuntu
+<summary><strong>Windows con Docker Desktop, WSL 2 y WSLg</strong></summary>
+
+En **PowerShell**, abre Ubuntu:
+
+```powershell
+wsl -d Ubuntu
 ```
 
-Tras esto, podemos arrancar un contenedor con RVIZ
+Después ejecuta lo siguiente **en la terminal de Ubuntu**, no en PowerShell. Las barras `\` al final de cada línea son continuaciones de Bash. `docker.exe` invoca el cliente Docker de Windows, como en las pruebas de este entorno:
+
 ```bash
-docker.exe run --rm -it   --name operator_tracking_rviz   --network host   --ipc host   -e DISPLAY=:0   -e ROS_DOMAIN_ID=0   -e RMW_IMPLEMENTATION=rmw_fastrtps_cpp   -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4   -e QT_X11_NO_MITSHM=1   -e LIBGL_ALWAYS_SOFTWARE=1   --mount 'type=bind,source=\\wsl.localhost\Ubuntu\mnt\wslg\.X11-unix,target=/tmp/.X11-unix,readonly'   cartifactory/operator-tracking:latest   rviz2 --ros-args -p use_sim_time:=true
+docker.exe run --rm -it \
+  --name operator_tracking_rviz \
+  --network host \
+  --ipc host \
+  -e DISPLAY=:0 \
+  -e ROS_DOMAIN_ID=0 \
+  -e RMW_IMPLEMENTATION=rmw_fastrtps_cpp \
+  -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4 \
+  -e QT_X11_NO_MITSHM=1 \
+  -e LIBGL_ALWAYS_SOFTWARE=1 \
+  --mount 'type=bind,source=\\wsl.localhost\Ubuntu\mnt\wslg\.X11-unix,target=/tmp/.X11-unix,readonly' \
+  cartifactory/operator-tracking:latest \
+  rviz2 --ros-args -p use_sim_time:=true
 ```
+
+Este montaje reutiliza el acceso gráfico de WSLg comprobado en Windows. Si la distribución tiene otro nombre, sustituye `Ubuntu` en `wsl -d` y en la ruta del montaje. Comprueba que WSLg está activo:
+
+```bash
+echo "$DISPLAY"
+ls -l /mnt/wslg/.X11-unix/
+```
+
+En Docker Desktop, activa **Settings → Resources → Network → Enable host networking** y aplica los cambios para utilizar la función de red del host de Docker Desktop. Esta opción está disponible desde Docker Desktop 4.34.
+
 </details>
 
 <details>
-<summary>Linux</summary>
-Para arrancar RViz2 desde Linux, podemos arrancar un contenedor con RVIZ
+<summary><strong>Linux de escritorio con Docker Engine y X11/XWayland</strong></summary>
+
+En Linux se utiliza **`docker`**, sin `.exe`, y no se ejecuta `wsl`. Este ejemplo requiere una sesión gráfica con `DISPLAY` definido y el socket `/tmp/.X11-unix`; también puede funcionar en una sesión Wayland que proporcione XWayland. No es un ejemplo para un servidor sin entorno gráfico ni para un motor Docker remoto.
+
+Desde una terminal de tu sesión gráfica, comprueba:
+
 ```bash
-docker.exe run --rm -it   --name operator_tracking_rviz   --network host   --ipc host   -e DISPLAY=:0   -e ROS_DOMAIN_ID=0   -e RMW_IMPLEMENTATION=rmw_fastrtps_cpp   -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4   -e QT_X11_NO_MITSHM=1   -e LIBGL_ALWAYS_SOFTWARE=1   --mount 'type=bind,source=\\wsl.localhost\Ubuntu\mnt\wslg\.X11-unix,target=/tmp/.X11-unix,readonly'   cartifactory/operator-tracking:latest   rviz2 --ros-args -p use_sim_time:=true
+echo "$DISPLAY"
+ls -l /tmp/.X11-unix/
 ```
+
+Para este contenedor, que ejecuta RViz como `root`, autoriza temporalmente el acceso del usuario local `root` al servidor X:
+
+```bash
+xhost +si:localuser:root
+```
+
+Después arranca RViz:
+
+```bash
+docker run --rm -it \
+  --name operator_tracking_rviz \
+  --network host \
+  --ipc host \
+  -e DISPLAY="$DISPLAY" \
+  -e ROS_DOMAIN_ID=0 \
+  -e RMW_IMPLEMENTATION=rmw_fastrtps_cpp \
+  -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4 \
+  -e QT_X11_NO_MITSHM=1 \
+  -e LIBGL_ALWAYS_SOFTWARE=1 \
+  --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix,readonly \
+  cartifactory/operator-tracking:latest \
+  rviz2 --ros-args -p use_sim_time:=true
+```
+
+`DISPLAY="$DISPLAY"` conserva el identificador de la pantalla de tu sesión; no tiene por qué ser `:0`. Esta receta supone Docker Engine local con el mapeo habitual del usuario `root`; con Docker rootless o remapeo de usuarios hay que adaptar la autorización gráfica.
+
+Cuando cierres RViz, revoca la autorización temporal:
+
+```bash
+xhost -si:localuser:root
+```
+
+Si falta `xhost`, en Ubuntu se instala mediante `sudo apt install x11-xserver-utils`. Si tu usuario necesita `sudo` para usar Docker, utiliza `sudo docker run ...`; ejecuta `xhost` como tu usuario de la sesión gráfica.
+
 </details>
+
+### Qué mostrar en RViz2
+
+Arrancar RViz abre la aplicación, pero **no carga automáticamente una configuración de visualización**. Añade los displays correspondientes o abre un archivo `.rviz` preparado para el workshop:
+
+| Display | Configuración orientativa |
+| --- | --- |
+| `Image` | `/camera/cameraD455/color/image_raw` para el color, o `/humans/hands/debug_image` si el módulo está publicando la imagen de depuración. |
+| `TF` | Ejes y transformaciones publicadas por la cámara, el robot o el bag. |
+| `RobotModel` | Descripción en `/robot_description`, con las transformaciones necesarias y los paquetes de mallas disponibles en la imagen. |
+| `Markers` | `/humans/hands/hand_x/landmarks3d_marker`, Los puntos 3D de las manos. |
+
+Selecciona en **Global Options → Fixed Frame** un frame que exista en el árbol TF y permita transformar los elementos que quieras mostrar. Para superponer las manos 3D, añade los displays o plugins correspondientes a los tipos que publique el módulo; el topic `landmarks2d` por sí solo no crea una mano 3D en RViz.
+
+Si un display no recibe datos, comprueba el nombre del topic, sus publicadores y su QoS:
+
+```bash
+ros2 topic info /camera/cameraD455/color/image_raw --verbose
+```
+
+Ajusta el QoS del display al del publicador. En las pruebas anteriores de este entorno, usar **Reliable** en el consumidor mejoró la recepción de imágenes de un publicador Reliable. Para datos en directo, `Volatile` evita solicitar muestras históricas; el modelo URDF y `/tf_static` pueden requerir `Transient Local` para recibir la última muestra publicada antes de abrir RViz.
+
+`LIBGL_ALWAYS_SOFTWARE=1` fuerza el renderizado por CPU, como en las pruebas de Windows. Es una opción de compatibilidad, no aceleración GPU. En Linux, si se configura y valida el acceso a la GPU, puede adaptarse el arranque para utilizarla.
+
+Al cerrar RViz, `--rm` elimina únicamente el contenedor `operator_tracking_rviz`; el módulo sigue ejecutándose. Este contenedor de visualización no necesita acceso USB ni montar los bags: recibe los datos mediante ROS 2.
 
 ## 5. Configuración del Context Broker de FIWARE
 
