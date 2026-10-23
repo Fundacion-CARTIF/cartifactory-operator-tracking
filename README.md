@@ -20,6 +20,7 @@
 )](https://releases.ubuntu.com/24.04/)
 
 ![operator_gif_1](./docs/assets/GIFs/manos_operario_1.gif)
+![operator_gif_2](./docs/assets/GIFs/manos_operario_2.gif)
 
 # Contenidos
 - [CARTIFactory, Middleware de Interacción Humano-Robot en Industria 5.](#cartifactory-middleware-de-interacción-humano-robot-en-industria-5)
@@ -33,6 +34,7 @@
     - [2.2 Con cámara física: añadir el acceso USB](#22-con-cámara-física-añadir-el-acceso-usb)
   - [3. Configurar y activar el pipeline en ambos modos](#3-configurar-y-activar-el-pipeline-en-ambos-modos)
   - [4. Visualización mediante RViz2](#4-visualización-mediante-rviz2)
+    - [Qué mostrar en RViz2](#qué-mostrar-en-rviz2)
   - [5. Configuración del Context Broker de FIWARE](#5-configuración-del-context-broker-de-fiware)
     - [5.1 Añadir nuevos topics](#51-añadir-nuevos-topics)
     - [5.2 Visualización de los datos](#52-visualización-de-los-datos)
@@ -99,8 +101,8 @@ Y después arrancamos el compose:
 ```bash
 docker compose -f docker-compose.yml up -d
 ```
->[!warning] Recuerda
-No añadas `docker-compose-usb.yml` ni ejecutes `usbipd attach` para este modo.
+>[!warning]
+>No añadas `docker-compose-usb.yml` ni ejecutes `usbipd attach` para este modo.
 
 El entrypoint importa automáticamente los archivos nuevos desde `/ros_bags_source/` hacia `/ros_bags/` mediante `rsync -a --ignore-existing`, antes de lanzar el pipeline. La primera importación de grabaciones grandes puede tardar varios minutos. Los archivos ya existentes se omiten; si sustituyes un archivo conservando el mismo nombre, no se actualizará automáticamente.
 
@@ -195,10 +197,11 @@ Por defecto se realiza **una sola pasada** y el comando termina al finalizar la 
 >
 >Reproduce desde **`/ros_bags`**, no desde `/ros_bags_source`. Si el aviso continúa después de completar la importación, revisa la carga del equipo, la lectura/descompresión y los topics seleccionados; no aumentes indefinidamente la cola. El volumen utiliza el disco de datos configurado en Docker Desktop, que no tiene por qué estar en el mismo disco que el repositorio.
 
-> [!NOTE] No mezclar apartados 2.1 y 2.2
+> [!important] 
+> 
+> **No mezclar apartados 2.1 y 2.2**
+> 
 > No ejecutes simultáneamente un driver de cámara o un publicador de TCP real que publique los mismos topics que el bag. Para trabajar con `--clock`, configura el tiempo simulado en los consumidores y en RViz como se indica en las secciones siguientes. Revisa también su QoS si faltan mensajes.
-
-
 
 ### 2.2 Con cámara física: añadir el acceso USB
 
@@ -536,7 +539,6 @@ Una vez tenemos el Context Broker reiniciado podemos acceder a las siguientes in
 
 Para los tres topics que estamos usando de muestra, os proporcionamos las queries que son necesarias para mostrar los datos en Grafana:
 
-
 <details>
 <summary>Queries para <code>/demo/booleano</code></summary>
 
@@ -646,14 +648,6 @@ LIMIT 60;
 
 </details>
 
-
-
-
-
-
-
-
-
 ### 5.3 Mapping Tool
 La herramienta de [mapeo entre DDS y NGSI-LD](https://github.com/Engineering-Research-and-Development/dds-ngsild-mapper) facilita el proceso de construir el `fiware\out\dds-config.json`, evitando que se tenga que hacer a mano. Se puede contruir la imagen previo a lanzar el contenedor:
 ```bash
@@ -663,8 +657,6 @@ Una vez construido se puede levantar:
 ```bash
 docker compose -f docker-compose-mapping.yml up -d
 ```
-
-
 
 >[!tip]
 > Si se quiere saber más sobre cómo se configura el Context Broker con ROS2, podéis revisar la [siguiente documentación](https://arise-framework-documentation.readthedocs.io/en/latest/rst/tutorials/tutorials.html).
