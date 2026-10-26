@@ -68,7 +68,7 @@ Docker reutiliza las capas que no han cambiado. No es necesario reconstruir la i
 
 ## 2 Definir la entrada
 
-Como se ha indicado en el apartado anterior, es posible probar este módulo utilizando una cámara Realsense conectada al ordenador (cosa que haremos nosotros en le workshop). Para facilitar la reproducibilidad y que podáis ver como funciona en vuestros esquipos, os proporcionamos una serie de ros bags, que podéis descargar del [siguiente enlace]().
+Como se ha indicado en el apartado anterior, es posible probar este módulo utilizando una cámara Realsense conectada al ordenador (cosa que haremos nosotros en le workshop). Para facilitar la reproducibilidad y que podáis ver como funciona en vuestros esquipos, os proporcionamos una serie de ros bags, que podéis descargar del [siguiente enlace](https://filesender.rediris.es/?s=download&token=43aae319-a190-0868-5e4c-50cc763883bd).
 
 ### 2.1 Sin cámara física: utilizar un rosbag
 
