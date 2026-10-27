@@ -31,6 +31,32 @@ services:
 
     restart: unless-stopped
 
+  discovery-ipv4:
+    image: dds-ngsi-mapper
+    network_mode: host
+    entrypoint: ["node", "-e"]
+    command:
+      - |
+        const net = require('net');
+        const server = net.createServer(client => {
+          const upstream = net.connect(8081, '::1');
+          client.on('error', () => upstream.destroy());
+          upstream.on('error', error => {
+            console.error(error.message);
+            client.destroy();
+          });
+          client.pipe(upstream).pipe(client);
+        });
+        server.on('error', error => {
+          console.error(error);
+          process.exit(1);
+        });
+        server.listen(8083, '0.0.0.0');
+    depends_on:
+      - discovery
+    restart: unless-stopped
+
+
   mapper-web:
     build:
       context: https://github.com/Engineering-Research-and-Development/dds-ngsild-mapper.git#main
@@ -39,8 +65,9 @@ services:
     image: dds-ngsi-mapper
     container_name: dds-ngsi-mapper-web
 
-    network_mode: host
-
+    # network_mode: host
+    ports:
+      - "3001:3001"
     depends_on:
       - discovery
 
@@ -49,7 +76,8 @@ services:
       - /app/src/server.js
 
     environment:
-      DDS_DISCOVERY_URL: ws://localhost:8081
+      # DDS_DISCOVERY_URL: ws://localhost:8081
+      DDS_DISCOVERY_URL: ws://host.docker.internal:8083
       DDS_DISCOVERY_TIMEOUT_MS: "30000"
       DDS_DISCOVERY_WS_QUIET_MS: "3000"
       DDS_DOMAIN: "0"
