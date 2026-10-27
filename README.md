@@ -662,6 +662,9 @@ Una vez construido se puede levantar:
 ```bash
 docker compose -f docker-compose-mapping.yml up -d
 ```
+La interfaz se lanzará en `http://localhost:3001/`. El discovery URL es `ws://host.docker.internal:8083`.
+
+
 
 >[!tip]
 > Si se quiere saber más sobre cómo se configura el Context Broker con ROS2, podéis revisar la [siguiente documentación](https://arise-framework-documentation.readthedocs.io/en/latest/rst/tutorials/tutorials.html).
