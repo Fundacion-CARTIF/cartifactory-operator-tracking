@@ -126,7 +126,7 @@ docker compose -f docker-compose.yml exec operator_tracking bash
 Dentro, comprueba la grabación antes de reproducirla:
 
 ```bash
-ros2 bag info /ros_bags/robot_camera_20261020_133206
+ros2 bag info /ros_bags/ROSBag1
 ```
 
 El siguiente comando se ha probado con esta grabación. Sustituye el nombre de la carpeta por el de tu bag y adapta la lista si sus topics son diferentes:
@@ -662,7 +662,7 @@ Una vez construido se puede levantar:
 ```bash
 docker compose -f docker-compose-mapping.yml up -d
 ```
-La interfaz se lanzará en `http://localhost:3001/`. El discovery URL es `ws://host.docker.internal:8083`.
+La interfaz se lanzará en `http://localhost:3001/`. El discovery URL es `ws://host.docker.internal:8083`.º
 
 
 
