@@ -35,26 +35,3 @@ Podemos obtener el estado del nodo de ciclo de vida
 ```bash
 ros2 lifecycle get /hand_mediapipe_node
 ```
-
-
-
-
-
-# 2D
-ros2 run hand_hri_mediapipe hand_mediapipe_lifecycle_node
-
-# 3D
-ros2 run hand_hri_mediapipe hand_landmarks_3d_lifecycle_node
-
-# Plano
-ros2 run hand_hri_mediapipe hand_palm_plane_lifecycle_node
-
-# SR Robot
-ros2 run hand_hri_mediapipe hand_cam_to_base_lifecycle_node
-
-# Launch
-ros2 launch hand_hri_mediapipe hand_pipeline_lifecycle.launch.py camera_name:=cameraD455
-
-
-
-
