@@ -85,19 +85,7 @@ El Compose monta dos rutas distintas dentro del contenedor:
 
 El volumen se crea si todavía no existe y se reutiliza en los siguientes arranques, tanto en modo cámara como en modo rosbag. No es necesario añadir un Compose específico para los bags.
 
-Arranca solo el módulo, reutilizando la imagen construida:
-
-- En Linux:
-```bash
-export MAPPER_UID="$(id -u)"
-export MAPPER_GID="$(id -g)"
-```
-- En Windows:
-```bash
-$env:MAPPER_UID = "1000"
-$env:MAPPER_GID = "1000"
-```
-Y después arrancamos el compose:
+Arrancamos el compose:
 ```bash
 docker compose -f docker-compose.yml up -d
 ```
@@ -144,7 +132,7 @@ ros2 bag info /ros_bags/robot_camera_20261020_133206
 El siguiente comando se ha probado con esta grabación. Sustituye el nombre de la carpeta por el de tu bag y adapta la lista si sus topics son diferentes:
 
 ```bash
-ros2 bag play /ros_bags/robot_camera_20261020_133206 \
+ros2 bag play /ros_bags/ROSBag1 \
   --clock \
   --read-ahead-queue-size 500 \
   --start-paused \
@@ -649,7 +637,24 @@ LIMIT 60;
 </details>
 
 ### 5.3 Mapping Tool
-La herramienta de [mapeo entre DDS y NGSI-LD](https://github.com/Engineering-Research-and-Development/dds-ngsild-mapper) facilita el proceso de construir el `fiware\out\dds-config.json`, evitando que se tenga que hacer a mano. Se puede contruir la imagen previo a lanzar el contenedor:
+La herramienta de [mapeo entre DDS y NGSI-LD](https://github.com/Engineering-Research-and-Development/dds-ngsild-mapper) facilita el proceso de construir el `fiware\out\dds-config.json`, evitando que se tenga que hacer a mano. 
+
+<details>
+<summary>Para visualización</summary>
+
+- En Linux:
+```bash
+export MAPPER_UID="$(id -u)"
+export MAPPER_GID="$(id -g)"
+```
+- En Windows:
+```bash
+$env:MAPPER_UID = "1000"
+$env:MAPPER_GID = "1000"
+```
+</details>
+
+Se puede contruir la imagen previo a lanzar el contenedor:
 ```bash
 docker compose -f docker-compose-mapping.yml build
 ```
